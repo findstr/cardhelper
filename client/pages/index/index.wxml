@@ -1,0 +1,44 @@
+<!--index.wxml-->
+<view>
+	<view id="summary" class="item-row" style="backgorund-color:#4CAF50;">
+		<view class="text">截止{{summary.day}}号</view>
+		<view class="text">卡数:{{summary.count}}</view>
+		<view class="text">额度:{{summary.limit}}</view>
+		<view class="text">欠款:{{summary.cost}}</view>
+	</view>
+        <view wx:for="{{cards}}" wx:key="index">
+                <view id="card_container" class="item" data-id="{{item.id}}" bindtap="cb_detail" >
+			<view id="card" class="item-row">
+				<view class="item-column">
+					<view class="item-row">
+						<view class="text"> {{item.bank}} </view>
+						<view class="text"> {{item.tail}} </view>
+					</view>
+					<view class="item-row">
+						<view class="text">额度:{{item.limit}} </view>
+						<view class="text">应还:{{item.cost}} </view>
+					</view>
+					<view class="item-row">
+						<view class="text">帐单日:{{item.billingday}}号</view>
+						<view class="text">还款日:{{item.repaymentdate}}号</view>
+					</view>
+				</view>
+				<view id="tips" class="item-row">
+					<view class="item-column">
+						<view id="tips_num" class="text">
+							{{item.tips_num}}
+						</view>
+					</view>
+					<view id="tips_right" class="item-column">
+						<view id="tips_str" class="text">{{item.tips_str}}</view>
+						<view id="tips_date" class="text">{{item.tips_date}}</view>
+					</view>
+				</view>
+			</view>
+			<view style="padding:10px 10px;width:100%">
+				<progress percent="{{item.tips_progress}}" active activeColor="{{item.tips_color}}"/>
+			</view>
+                </view>
+        </view>
+        <button class="item" bindtap="cb_detail"><view>添加卡片</view></button>
+</view>
