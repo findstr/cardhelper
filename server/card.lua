@@ -15,8 +15,8 @@ local proto, err = zproto:parse [[
 card {
 	.bank:string 1
 	.num:integer 2
-	.limit:integer 3
-	.cost:integer 4
+	.limit:float 3
+	.cost:float 4
 	.billingday:integer 5
 	.repaymentdate:integer 6
 }
