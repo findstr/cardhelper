@@ -48,11 +48,7 @@ function typeof_peroid(card) {
 			card.peroidstop = next_repay
 		} else {
 			card.peroid = "billing"
-			if (today > repay) {
-				bill.setMonth(month+1)
-			} else {
-				repay.setMonth(month-1)
-			}
+			repay.setMonth(month-1)
 			card.peroidstart = repay
 			card.peroidstop = bill
 		}
