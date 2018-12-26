@@ -40,7 +40,7 @@ Page({
 				card.tips_str = "天后出帐"
 				card.tips_color = '#07BB06'
 			}
-			var total = (card.peroidstop - card.peroidstart) / 86400000
+			var total = 31
 			card.tips_progress = 100 - card.tips_num / total * 100
 		}
 		return function(a, b) {
@@ -61,18 +61,16 @@ Page({
 		var cards = this.data.cards
 		for (var i = 0; i < cards.length; i++) {
 			var card = cards[i]
-			if (card.peroid == "billing") {
-				card.proid = "repayment"
+			if (card.peroid == "repayment") {
+				card.proid = "billing"
 				card.peroidstop = new Date(card.peroidstart.getTime())
 				card.peroidstop.setMonth(card.peroidstop.getMonth() + 1)
 			} else {
-				var t = new Date(card.peroidstop.getTime())
-				t.setMonth(t.getMonth() + 1)
-				card.peroidstop = t
+
 			}
-			var total = (card.peroidstop - card.peroidstart)/86400000
+			var total = 31
 			card.tips_num = (card.peroidstop - today) / 86400000
-			card.tips_str = "天后还款"
+			card.tips_str = "天后出帐"
 			card.tips_color = this.data.modecolor
 			card.tips_progress = 100 - card.tips_num / total * 100
 		}
@@ -109,11 +107,9 @@ Page({
 			cmp = this.mode_pay()
 		}
 		cards.sort(cmp)
-		console.log("+++-", this.data.cards, data)
 		for (var i = 0; i < cards.length; i++)
 			cards[i].id = i
 		this.setData(this.data)
-		console.log("+++=", this.data.cards, data)
 	},
 	onShow() {
 		console.log("show")
