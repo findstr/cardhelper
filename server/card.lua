@@ -19,6 +19,7 @@ card {
 	.cost:float 4
 	.billingday:integer 5
 	.repaymentdate:integer 6
+	.repay:integer 7
 }
 ]]
 
