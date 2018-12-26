@@ -9,8 +9,7 @@ App({
 		_this.globalData.session = wx.getStorageSync('session') || 0
 		_this.HTTP = new Fly()
 		_this.SESSION = new Fly()
-		console.log(_this.HTTP, _this.SESSION)
-		_this.HTTP.config.baseURL = 'http://192.168.2.118:9001'
+		_this.HTTP.config.baseURL = conf.server
 		_this.HTTP.config.headers = {
 			'content-type': 'application/json',
 			'parseJson': true
@@ -32,40 +31,39 @@ App({
 						resolve(res)
 					},
 					fail(res) {
-						reject(err)
+						reject(res)
 					}
 				})
 			})
 		}
 		_this.HTTP.interceptors.response.use((response, promise) => {
+			console.log(response)
 			wx.hideLoading()
 			var HTTP = _this.HTTP
-			return promise.resolve(response.data)
-		}, (err) => {
+			return response.data
+		}, ((err, promise) => {
 			var HTTP = _this.HTTP
 			var SESSION = _this.SESSION
 			if (err.status == 498) {
 				HTTP.lock()
-				wx_login().then((res)=>{
-					wx.showToast({
-						title: '登录中',
-					})
+				wx.showToast({
+					title: '登录中',
+				})
+				return wx_login().then((res) => {
 					var code = res.code
 					return SESSION.post('/login', { code: code })
 						.then((res) => {
-							HTTP.unlock()
 							wx.setStorageSync('session', res.data.session)
 							_this.globalData.session = res.data.session
 							console.log(_this.globalData, err.request)
-							return HTTP.request(err.request)
-						}).catch(()=>{
+							console.log("+++", err.request)
+							var ret = HTTP.request(err.request)
 							HTTP.unlock()
+							return ret
 						})
-				}).catch((err)=>{
-					console.log("XXX", err)
 				})
 			}
-		})
+		}))
         },
         globalData: {
 		session: 0

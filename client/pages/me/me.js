@@ -10,23 +10,18 @@ Page({
         },
 	pullinfo() {
 		var _this = this
+		var HTTP = app.HTTP
 		wx.getUserInfo({
 			success(res) {
-				wx.request({
-					url: conf.server + "/userinfo",
-					data: {
-						iv: res.iv,
-						data: res.encryptedData,
-						session: app.globalData.session
-					},
-					method: 'POST',
-					success(res) {
-						console.log(res)
-						_this.data.hasUserInfo = true
-						_this.data.userInfo.avatarUrl = res.data.avatarUrl
-						_this.data.userInfo.nickName = res.data.nickName
-						_this.setData(_this.data)
-					}
+				HTTP.post('/userinfo', {
+					iv: res.iv,
+					data: res.encryptedData,
+				}).then((res)=> {
+					console.log(res)
+					_this.data.hasUserInfo = true
+					_this.data.userInfo.avatarUrl = res.avatarUrl
+					_this.data.userInfo.nickName = res.nickName
+					_this.setData(_this.data)
 				})
 			}
 		})

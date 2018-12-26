@@ -71,16 +71,15 @@ page {
 }
 
 .item-column {
-	display:flex;
-	flex-direction: column;
-	flex-wrap: nowrap;
-	justify-content:center;
+  display:flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content:center;
 }
 
 .item-row {
 	display:flex;
 	padding-left:10px;
-	padding-top:6px;
 	flex-direction: row;
 	align-content: flex-start;
 	flex-wrap: nowrap;

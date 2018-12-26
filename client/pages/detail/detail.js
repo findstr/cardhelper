@@ -4,10 +4,11 @@ var conf = require("../../utils/conf")
 Page({
 	data: {},
 	refresh() {
-		this.data.bill_value = [this.data.billingday - 1]
-		this.data.repay_value = [this.data.repaymentdate - 1]
-		console.log("refresh", this.data)
-		this.setData(this.data)
+		var data = this.data
+		data.bill_value = [data.billingday - 1]
+		data.repay_value = [data.repaymentdate - 1]
+		console.log("refresh", data)
+		this.setData(data)
 	},
 	/**
 	 * 生命周期函数--监听页面加载
@@ -21,11 +22,21 @@ Page({
 		_this.data.billingday = _this.data.billingday || 1
 		_this.data.repaymentdate = _this.data.repaymentdate || 1
 		_this.data.days = days
+		_this.data.banks = conf.banks
+		_this.data.bank_value = [conf.getshort(_this.data.bank)]
+		_this.data.bank = _this.data.banks[_this.data.bank_value].full
+		_this.data.repaid = _this.data.repay != 0
+		_this.data.peroidstart = new Date(_this.data.peroidstart)
+		_this.data.peroidstop = new Date(_this.data.peroidstop)
+		console.log("OnLoad", _this.data.bank_value, _this.data.peroidstart.getDate())
 		_this.setData(_this.data)
 		_this.refresh()
 	},
 	bank_change(e) {
-		this.data.bank = e.detail.value
+		var idx = e.detail.value[0]
+		this.data.bank_value = [idx]
+		this.data.bank = this.data.banks[idx].full
+		console.log("change", this.data.bank_value, this.data.bank)
 		this.refresh()
 	},
 	num_change(e) {
@@ -56,10 +67,11 @@ Page({
 			session: app.globalData.session,
 			bank: data.bank,
 			num: parseInt(data.num),
-			limit: parseInt(data.limit),
-			cost: parseInt(data.cost),
+			limit: parseFloat(data.limit),
+			cost: parseFloat(data.cost),
 			billingday: parseInt(data.billingday),
-			repaymentdate: parseInt(data.repaymentdate)
+			repaymentdate: parseInt(data.repaymentdate),
+			repay: data.repay
 		}).then((res) => {
 			wx.navigateBack({
 				delta: 1,
@@ -76,5 +88,15 @@ Page({
 				delta: 1,
 			})
 		})
-	}
+	},
+	cb_repay() {
+		var data = this.data
+		data.cost = 0
+		data.repay = data.peroidstop.getTime() / 1000
+		this.cb_save()
+	},
+	cb_bill() {
+		this.data.repay = 0
+		this.cb_save()
+	},
 })

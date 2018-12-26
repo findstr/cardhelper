@@ -25,3 +25,8 @@
 	font-size:8px;
 }
 
+#mode {
+	margin-top:auto;
+	margin-bottom:auto;
+	font-size:25px;
+}

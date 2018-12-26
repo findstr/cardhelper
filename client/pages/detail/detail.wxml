@@ -1,9 +1,20 @@
 <view id="container">
 	<view class="item-column">
-		<view class="item-row"><view class="text"> 发卡银行:</view> <input bindinput="bank_change" type="text" value="{{bank}}"/></view>
+		<view class="item-row">
+			<view class="text"> 发卡银行:</view> 
+			<picker-view
+				class="picker"
+				indicator-class="indicator"
+				value="{{bank_value}}"
+				bindchange="bank_change">
+				<picker-view-column>
+					<view wx:key="item" wx:for="{{banks}}" style="text-align:center;line-height:35px;">{{item.full}}</view>
+				</picker-view-column>
+			</picker-view>
+		</view>
 		<view class="item-row"><view class="text"> 卡号:</view> <input bindinput="num_change" type="text" value="{{num}}"/></view>
 		<view class="item-row"><view class="text"> 额度:</view> <input bindinput="limit_change" type="number" value="{{limit}}"/></view>
-		<view class="item-row"><view class="text"> 应还:</view> <input bindinput="cost_change" type="number" value="{{cost}}"/></view>
+		<view class="item-row"><view class="text"> 应还:</view> <input bindinput="cost_change" type="digit" value="{{cost}}"/></view>
 		<view class="item-row">
 			<view class="text"> 帐单日:</view>
 				<picker-view
@@ -30,6 +41,8 @@
 		</view>
 		<view class="item-row">
 			<button class="-ui-button" bindtap="cb_delete">删除</button>
+			<button class="-ui-button" bindtap="cb_repay" wx:if="{{!repaid}}">还清</button>
+			<button class="-ui-button" bindtap="cb_bill" wx:else>出帐</button>
 			<button class="-ui-button" bindtap="cb_save">保存</button>
 		</view>
 	</view>

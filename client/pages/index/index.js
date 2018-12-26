@@ -1,5 +1,10 @@
 const app = getApp()
 var conf = require("../../utils/conf")
+var bill = require("../../utils/bill")
+var color_mode_repay = '#07bb06'
+var color_mode_pay = '#3879D9'
+var tips_mode_repay = "还"
+var tips_mode_pay = "刷"
 Page({
         data: {
 		summary : {
@@ -8,76 +13,37 @@ Page({
 			cost: 0,
 			day: 0
 		},
-                cards: []
+                cards: [],
+		modecolor: color_mode_repay,
+		modetips: tips_mode_repay
         },
-	judge(card, today, x, y, tx, ty) {
-		var delta
-		if (today < x) {
-			card.type = tx
-			card.tips_num = (x - today) / 86400000
-			delta = (y.setMonth(y.getMonth() - 1) - x) / 86400000
-		} else if (today >= x && today < y) {
-			card.type = ty
-			card.tips_num = (y - today) / 86400000
-			delta = (y - x) / 86400000
-		} else if (today >= y) {
-			card.type = tx
-			card.tips_num = (x.setMonth(x.getMonth() + 1) - today) / 86400000
-			delta = (x - y) / 86400000
-		} else {
-			console.log("today", today)
-		}
-		return delta
-	},
-	refresh(cards) {
-		console.log(cards)
-		var _this = this
-		_this.data.cards = cards
-		var cards = _this.data.cards;
-		var today = new Date();
-		today.setDate(20)
-		today.setHours(0)
-		today.setMinutes(0)
-		today.setSeconds(0)
-		today.setMilliseconds(0)
-		_this.data.summary.day = today.getDate()
-		_this.data.summary.count = cards.length
-		_this.data.summary.limit = 0
-		_this.data.summary.cost = 0
+	mode_repay() {
+		var today = bill.someday()
+		var cards = this.data.cards
 		for (var i = 0; i < cards.length; i++) {
-			var delta
 			var card = cards[i]
-			cards[i].tail = card.num.toString().slice(-4)
-			var bill = new Date()
-			bill.setDate(card.billingday)
-			bill.setHours(0)
-			bill.setMinutes(0)
-			bill.setSeconds(0)
-			bill.setMilliseconds(0)
-			var repay = new Date()
-			repay.setDate(card.repaymentdate)
-			repay.setHours(0)
-			repay.setMinutes(0)
-			repay.setSeconds(0)
-			repay.setMilliseconds(0)
-			if (bill < repay) {
-				delta = this.judge(card, today, bill, repay, "billing", "repaying")
-			} else {
-				delta = this.judge(card, today, repay, bill, "repaying", "billing")
+			if (card.peroid == "repayment") {
+				var repay = new Date(card.repay * 1000)
+				if (repay.getTime() == card.peroidstop.getTime()) {
+					var t = new Date(card.peroidstart.getTime())
+					t.setMonth(t.getMonth() + 1)
+					card.peroid = "billing"
+					card.peroidstop = t
+				} else {
+					card.tips_str = "天后还款"
+					card.tips_color = '#BA9F07'
+				}
 			}
-			if (card.type == "billing") {
+			card.tips_num = (card.peroidstop - today) / 86400000
+			if (card.peroid == "billing") {
+				console.log(card)
 				card.tips_str = "天后出帐"
-				card.tips_color = '#07BB06FF'
-			} else {
-				card.tips_str = "天后还款"
-				card.tips_color = '#BA9F07FF'
+				card.tips_color = '#07BB06'
 			}
 			card.tips_progress = 100 - card.tips_num / 30 * 100
-			_this.data.summary.limit += card.limit
-			_this.data.summary.cost += card.cost
 		}
-		cards.sort(function(a, b) {
-			if (a.type == b.type) {
+		return function(a, b) {
+			if (a.peroid == b.peroid) {
 				if (a.tips_num > b.tips_num)
 					return 1
 				else if (a.tips_num < b.tips_num)
@@ -85,20 +51,76 @@ Page({
 				else
 					return 0
 			} else {
-				return a.type == "repaying" ? -1 : 1
+				return a.peroid == "repayment" ? -1 : 1
 			}
-		})
+		}
+	},
+	mode_pay() {
+		var today = bill.someday()
+		var cards = this.data.cards
+		for (var i = 0; i < cards.length; i++) {
+			var card = cards[i]
+			if (card.peroid == "repayment") {
+				var t = new Date(card.peroidstart.getTime())
+				t.setMonth(t.getMonth() + 1)
+				card.peroid = "billing"
+				card.peroidstop = t
+			}
+			card.tips_num = (card.peroidstop - today) / 86400000
+			card.tips_str = "天后出帐"
+			card.tips_color = this.data.modecolor
+			card.tips_progress = 100 - card.tips_num / 30 * 100
+		}
+		return function (a, b) {
+			if (a.tips_num < b.tips_num)
+				return 1
+			else if (a.tips_num > b.tips_num)
+				return -1
+			else
+				return 0
+		}
+	},
+	refresh() {
+		var cmp
+		var data = this.data
+		var cards = data.cards;
+		var today = bill.someday()
+		var summary = data.summary
+		summary.day = today.getDate()
+		summary.count = cards.length
+		summary.limit = 0
+		summary.cost = 0
+		for (var i = 0; i < cards.length; i++) {
+			var delta
+			var card = cards[i]
+			card.tail = card.num.toString().slice(-4)
+			bill.typeof_peroid(card)
+			data.summary.limit += card.limit
+			data.summary.cost += card.cost
+		}
+		if (data.modecolor == color_mode_repay) {
+			cmp = this.mode_repay()
+		} else {
+			cmp = this.mode_pay()
+		}
+		cards.sort(cmp)
+		console.log("+++-", this.data.cards, data)
 		for (var i = 0; i < cards.length; i++)
 			cards[i].id = i
-		_this.setData(_this.data)
+		this.setData(this.data)
+		console.log("+++=", this.data.cards, data)
 	},
 	onShow() {
+		console.log("show")
 		var _this = this
 		var HTTP = app.HTTP
-		console.log(HTTP)
 		HTTP.get('/listcard').then((res) => {
-			console.log(res)
-			_this.refresh(res)
+			_this.data.cards = res
+			for (var i = 0; i < res.length; i++) {
+				var card = res[i]
+				card.bank = conf.banks[conf.getfull(card.bank)].short
+			}
+			_this.refresh()
 		}).catch((err)=>{
 			console.log(err)
 		})
@@ -108,5 +130,16 @@ Page({
 		wx.navigateTo({
 			url: '../detail/detail?param=' + JSON.stringify(card)
 		})
+	},
+	cb_mode(event) {
+		console.log("____", this.data.cards)
+		if (this.data.modecolor == color_mode_pay) {
+			this.data.modecolor = color_mode_repay
+			this.data.modetips = tips_mode_repay
+		} else {
+			this.data.modecolor = color_mode_pay
+			this.data.modetips = tips_mode_pay
+		}
+		this.refresh()
 	}
 })
