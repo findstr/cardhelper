@@ -22,13 +22,12 @@ function typeof_peroid(card) {
 			card.peroidstop = repay
 		} else {
 			card.peroid = "billing"
-			var bill2 = someday(card.billingday)
 			if (today > repay) {
-				bill2.setMonth(month+1)
+				bill.setMonth(month+1)
 			} else {
-				bill.setMonth(month-1)
+				repay.setMonth(month-1)
 			}
-			card.peroidstart = bill
+			card.peroidstart = repay
 			card.peroidstop = bill2
 		}
 	} else { //cross month, so bill day at this month, and repay day at next month
