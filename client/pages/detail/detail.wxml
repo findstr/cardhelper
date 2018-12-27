@@ -31,8 +31,12 @@
 			<input bindinput="limit_change" type="number" value="{{limit}}"/>
 		</view>
 		<view class="item-row padding">
-			<view class="text"> 应还:</view>
-			<input bindinput="cost_change" type="digit" value="{{cost}}"/>
+			<view class="text"> 已出账:</view>
+			<input bindinput="billed_change" type="digit" value="{{billed}}"/>
+		</view>
+                <view class="item-row padding">
+			<view class="text"> 未出账:</view>
+			<input bindinput="billing_change" type="digit" value="{{billing}}"/>
 		</view>
 		<view class="item-row padding">
 			<view class="text text-center"> 帐单日:</view>

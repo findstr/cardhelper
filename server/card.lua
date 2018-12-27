@@ -16,10 +16,15 @@ card {
 	.bank:string 1
 	.num:integer 2
 	.limit:float 3
-	.cost:float 4
-	.billingday:integer 5
-	.repaymentdate:integer 6
-	.repay:integer 7
+	.billingday:integer 4
+	.repaymentdate:integer 5
+	.billed:float 6
+	.billing:float 7
+	.bill_month:integer 8
+	.bill_type:integer 9
+	.bill_start:integer 10
+	.bill_stop:integer 11
+	.repay_date:integer 12
 }
 ]]
 

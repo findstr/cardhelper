@@ -6,14 +6,15 @@ var color_mode_pay = 'green'
 var tips_mode_repay = "还"
 var tips_mode_pay = "刷"
 Page({
-        data: {
-		summary : {
-			count: 0,
-			limit: 0,
-			cost: 0,
-			day: 0
-		},
-                cards: [],
+    data: {
+        summary : {
+          count: 0,
+          limit: 0,
+          billed: 0,
+          billing: 0,
+          day: 0
+        },
+        cards: [],
 		modecolor: color_mode_repay,
 		modetips: tips_mode_repay
         },
@@ -23,7 +24,7 @@ Page({
 		for (var i = 0; i < cards.length; i++) {
 			var card = cards[i]
 			if (card.peroid == "repayment") {
-				var repay = new Date(card.repay * 1000)
+				var repay = new Date(card.repay_date * 1000)
 				if (repay.getTime() == card.peroidstop.getTime()) {
 					var t = new Date(card.peroidstart.getTime())
 					t.setMonth(t.getMonth() + 1)
@@ -92,17 +93,23 @@ Page({
 		summary.day = today.getDate()
 		summary.count = cards.length
 		summary.limit = 0
-		summary.cost = 0
+		summary.billed = 0
+                summary.billing = 0
 		for (var i = 0; i < cards.length; i++) {
 			var delta
 			var card = cards[i]
 			card.tail = ("0000" + card.num.toString()).slice(-4)
 			bill.typeof_peroid(card)
-			card.cost_str = card.cost.toFixed(2)
+                        card.billing = card.billing || 0
+			card.billed_str = card.billed.toFixed(2)
+                        card.billing_str = card.billing.toFixed(2)
+                        console.log(card)
 			data.summary.limit += card.limit
-			data.summary.cost += card.cost
+			data.summary.billed += card.billed
+                        data.summary.billing += card.billing
 		}
-		data.summary.cost = data.summary.cost.toFixed(2)
+		data.summary.billed = data.summary.billed.toFixed(2)
+                data.summary.billing = data.summary.billing.toFixed(2)
 		if (data.modecolor == color_mode_repay) {
 			cmp = this.mode_repay()
 		} else {

@@ -27,10 +27,11 @@ Page({
 		var info = conf.banks[idx]
 		_this.data.bank_value = [idx]
 		_this.data.background = info.color
-		_this.data.repaid = _this.data.repay != 0
-		_this.data.peroidstart = new Date(_this.data.peroidstart)
-		_this.data.peroidstop = new Date(_this.data.peroidstop)
-		console.log("OnLoad", _this.data.bank_value, _this.data.peroidstart.getDate())
+                _this.data.billing = _this.data.billing || 0
+                _this.data.billed = _this.data.billed || 0
+                _this.data.billing = _this.data.billing.toFixed(2)
+                _this.data.billed = _this.data.billed.toFixed(2)
+		_this.data.repaid = _this.data.repay_date != 0
 		_this.setData(_this.data)
 		_this.refresh()
 	},
@@ -52,10 +53,14 @@ Page({
 		this.data.limit = e.detail.value
 		this.refresh()
 	},
-	cost_change(e) {
-		this.data.cost = e.detail.value
-		this.refresh()
+	billed_change(e) {
+                this.data.billed = e.detail.value
+                this.refresh()
 	},
+        billing_change(e) {
+                this.data.billing = e.detail.value
+                this.refresh()
+        },
 	billingday_change(e) {
 		this.data.billingday = e.detail.value[0] + 1
 		this.refresh()
@@ -66,16 +71,22 @@ Page({
 	},
 	cb_save() {
 		var HTTP = app.HTTP
-		console.log(this.data.bank, this.data.limit, this.data.cost, this.data.billingday, this.data.repaymentdate)
+		console.log(this.data.bank, this.data.limit, this.data.billed, this.data.billingday, this.data.repaymentdate)
 		var data = this.data
+                if (data.billing == "")
+                        data.billing = "0"
+                if (data.billed == "")
+                        data.billed = "0"
+                console.log(parseFloat(data.billing))
 		HTTP.post('/addcard', {
 			bank: data.bank,
 			num: parseInt(data.num),
 			limit: parseFloat(data.limit),
-			cost: parseFloat(data.cost),
+			billed: parseFloat(data.billed),
+                        billing: parseFloat(data.billing),
 			billingday: parseInt(data.billingday),
 			repaymentdate: parseInt(data.repaymentdate),
-			repay: data.repay
+			repay_date: data.repay_date
 		}).then((res) => {
 			wx.navigateBack({
 				delta: 1,
@@ -95,12 +106,12 @@ Page({
 	},
 	cb_repay() {
 		var data = this.data
-		data.cost = 0
-		data.repay = data.peroidstop.getTime() / 1000
+		data.billed = 0
+		data.repay_date = data.peroidstop.getTime() / 1000
 		this.cb_save()
 	},
 	cb_bill() {
-		this.data.repay = 0
+		this.data.repay_date = 0
 		this.cb_save()
 	},
 })

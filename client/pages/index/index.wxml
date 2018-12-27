@@ -5,18 +5,21 @@
   </bar>
 </custom>
 <view>
-	<view id="container" class="background shadow-lg bg-cyan">
-		<view id="mode" class="padding {{modecolor}}" bindtap="cb_mode">{{modetips}}</view>
-		<view class="flex flex-direction" bindtap="cb_accounting">
-			<view id="summary" class="item-row" style="backgorund-color:#4CAF50;">
-				<view class="text">截止{{summary.day}}日</view>
-				<view class="text">卡数:{{summary.count}}</view>
-			</view>
-			<view id="summary" class="item-row" style="backgorund-color:#4CAF50;">
-				<view class="text">额度:{{summary.limit}}元</view>
-				<view class="text">应还:{{summary.cost}}元</view>
-			</view>
-		</view>
+	<view id="container" class="flex flex-direction background shadow-lg bg-cyan">
+                <view class="flex align-center justify-between">
+                        <view id="mode" class="padding {{modecolor}}" bindtap="cb_mode">{{modetips}}</view>
+                        <view class="flex flex-direction" bindtap="cb_accounting">
+                                <view id="summary" class="flex" style="backgorund-color:#4CAF50;">
+                                        <view class="text">截止{{summary.day}}日</view>
+                                        <view class="text">卡数:{{summary.count}}</view>
+                                        <view class="text">额度:{{summary.limit}}元</view>
+                                </view>
+                        </view>
+                </view>
+                 <view id="summary" class="flex justify-end">
+                        <view class="text">已出帐:{{summary.billed}}元</view>
+                        <view class="text">未出帐:{{summary.billing}}元</view>
+                </view>
 	</view>
         <view wx:for="{{cards}}" wx:key="index">
                 <view id="container"
@@ -27,14 +30,11 @@
 					<view class="flex">
 						<view class="text"> {{item.bankshort}} </view>
 						<view class="text"> {{item.tail}} </view>
+                                                <view class="text">额度:{{item.limit}}元 </view>
 					</view>
 					<view class="flex">
 						<view class="text">帐单日:{{item.billingday}}日</view>
 						<view class="text">还款日:{{item.repaymentdate}}日</view>
-					</view>
-					<view class="flex">
-						<view class="text">额度:{{item.limit}}元 </view>
-						<view class="text">应还:{{item.cost_str}}元 </view>
 					</view>
 				</view>
 				<view id="tips" class="flex">
@@ -48,6 +48,10 @@
 						<view id="tips_date" class="text">{{item.tips_date}}</view>
 					</view>
 				</view>
+			</view>
+        		<view class="flex">
+				<view class="text">已出账:{{item.billed_str}}元 </view>
+                                <view class="text">未出账:{{item.billing_str}}元 </view>
 			</view>
 			<view id="progress" class="{{item.background}}">
 				<progress-bar class="sm striped active" style="height:3px;">

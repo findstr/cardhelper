@@ -46,8 +46,11 @@ Page({
 		var dat = options.param
 		var cards = JSON.parse(dat)
 		this.data.cards = cards
-		for (var i = 0; i < cards.length; i++)
-			cards[i].cost_str = cards[i].cost.toFixed(2)
+		for (var i = 0; i < cards.length; i++) {
+                        var card = cards[i]
+			card.billed = card.billed.toFixed(2)
+                        card.billing = card.billing.toFixed(2)
+                }
 		this.restore_card()
 		this.restore_money()
 		this.setData(this.data)
@@ -91,16 +94,17 @@ Page({
 		var HTTP = app.HTTP
 		var money = parseFloat(this.data.money)
 		for (var i = 0; i < cards.length; i++) {
-			var data = cards[i]
-			data.cost += money
+                        var data = cards[i]
+			data.billing = parseFloat(data.billing) + money
 			HTTP.post('/addcard', {
 				bank: data.bank,
 				num: parseInt(data.num),
 				limit: parseFloat(data.limit),
-				cost: parseFloat(data.cost),
+				billed: parseFloat(data.billed),
+                                billing: parseFloat(data.billing),
 				billingday: parseInt(data.billingday),
 				repaymentdate: parseInt(data.repaymentdate),
-				repay: data.repay
+				repay_date: data.repay_date
 			}).then((res) => {
 				if (--pending <= 0) {
 					wx.hideToast()

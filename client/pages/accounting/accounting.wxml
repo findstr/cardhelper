@@ -38,7 +38,8 @@
 					<view class="text-lg">{{item.tail}}</view>
 				</view>
 				<view class="text-lg">额度: {{item.limit}}</view>
-				<view class="text-lg">应还: {{item.cost_str}}</view>
+				<view class="text-lg">已出账: {{item.billed}}</view>
+                                <view class="text-lg">未出账: {{item.billing}}</view>
 			</view>
 		</view>
 	</view>
