@@ -2,15 +2,15 @@
 	"pages": [
 		"pages/index/index",
 		"pages/detail/detail",
-		"pages/me/me"
+		"pages/me/me",
+		"pages/accounting/accounting"
 	],
 	"window": {
 		"backgroundTextStyle": "light",
 		"navigationBarBackgroundColor": "#27292E",
 		"navigationBarTitleText": "帐单列表",
 		"navigationBarTextStyle": "white",
-		"enablePullDownRefresh": true,
-		"onReachBottomDistance": 50
+		"navigationStyle": "custom"
 	},
 	"tabBar": {
 		"color": "#7A7E83",

@@ -1,3 +1,6 @@
+@import "deps/wxss/icon.wxss";
+@import "deps/wxss/colorui.wxss";
+
 /**app.wxss**/
 .container {
   height: 100%;

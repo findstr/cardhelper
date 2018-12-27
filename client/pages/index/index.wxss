@@ -1,10 +1,7 @@
 @import "../common/ui.wxss";
+
 #summary {
 	align-content: space-between;
-}
-
-#card_container {
-	flex-direction: column;
 }
 
 #card {
@@ -12,21 +9,31 @@
 	justify-content: space-between;
 }
 
+#progress {
+	width:100%;
+}
+
 #tips_num {
 	display:flex;
 	font-size:30px;
 }
 
-#tips_str {
+#tips_str, #tips_date {
 	font-size:8px;
+	padding-top:0;
+	padding-bottom:0;
+	margin-top:5px;
+	margin-bottom: 5px;
 }
 
-#tips_date {
-	font-size:8px;
-}
 
 #mode {
 	margin-top:auto;
 	margin-bottom:auto;
 	font-size:25px;
+}
+
+button {
+	margin-left:20px;
+	margin-right: 20px;
 }

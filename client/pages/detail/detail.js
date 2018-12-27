@@ -23,8 +23,10 @@ Page({
 		_this.data.repaymentdate = _this.data.repaymentdate || 1
 		_this.data.days = days
 		_this.data.banks = conf.banks
-		_this.data.bank_value = [conf.getshort(_this.data.bank)]
-		_this.data.bank = _this.data.banks[_this.data.bank_value].full
+		var idx = conf.getshort(_this.data.bankshort)
+		var info = conf.banks[idx]
+		_this.data.bank_value = [idx]
+		_this.data.background = info.color
 		_this.data.repaid = _this.data.repay != 0
 		_this.data.peroidstart = new Date(_this.data.peroidstart)
 		_this.data.peroidstop = new Date(_this.data.peroidstop)
@@ -33,9 +35,12 @@ Page({
 		_this.refresh()
 	},
 	bank_change(e) {
+		var data = this.data
 		var idx = e.detail.value[0]
-		this.data.bank_value = [idx]
-		this.data.bank = this.data.banks[idx].full
+		console.log(data.banks)
+		data.bank_value = [idx]
+		data.bank = data.banks[idx].full
+		data.background = data.banks[idx].color
 		console.log("change", this.data.bank_value, this.data.bank)
 		this.refresh()
 	},
@@ -64,7 +69,6 @@ Page({
 		console.log(this.data.bank, this.data.limit, this.data.cost, this.data.billingday, this.data.repaymentdate)
 		var data = this.data
 		HTTP.post('/addcard', {
-			session: app.globalData.session,
 			bank: data.bank,
 			num: parseInt(data.num),
 			limit: parseFloat(data.limit),

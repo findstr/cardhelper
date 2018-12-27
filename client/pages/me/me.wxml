@@ -1,4 +1,8 @@
-<!--index.wxml-->
+<custom style="height:65px">
+  <bar class="fixed gradual-blue" style="height:65px;padding-top:20px;">
+	<view class='content'>我</view>
+  </bar>
+</custom>
 <view class="container">
   <view class="userinfo">
     <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 授权认证 </button>

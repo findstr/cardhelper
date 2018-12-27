@@ -1,8 +1,8 @@
 const app = getApp()
 var conf = require("../../utils/conf")
 var bill = require("../../utils/bill")
-var color_mode_repay = '#07bb06'
-var color_mode_pay = '#3879D9'
+var color_mode_repay = 'red'
+var color_mode_pay = 'green'
 var tips_mode_repay = "还"
 var tips_mode_pay = "刷"
 Page({
@@ -31,14 +31,14 @@ Page({
 					card.peroidstop = t
 				} else {
 					card.tips_str = "天后还款"
-					card.tips_color = '#BA9F07'
+					card.tips_color = 'bg-yellow'
 				}
 			}
 			card.tips_num = (card.peroidstop - today) / 86400000
 			if (card.peroid == "billing") {
 				console.log(card)
 				card.tips_str = "天后出帐"
-				card.tips_color = '#07BB06'
+				card.tips_color = 'bg-green'
 			}
 			var total = 31
 			card.tips_progress = 100 - card.tips_num / total * 100
@@ -96,19 +96,25 @@ Page({
 		for (var i = 0; i < cards.length; i++) {
 			var delta
 			var card = cards[i]
-			card.tail = card.num.toString().slice(-4)
+			card.tail = ("0000" + card.num.toString()).slice(-4)
 			bill.typeof_peroid(card)
+			card.cost_str = card.cost.toFixed(2)
 			data.summary.limit += card.limit
 			data.summary.cost += card.cost
 		}
+		data.summary.cost = data.summary.cost.toFixed(2)
 		if (data.modecolor == color_mode_repay) {
 			cmp = this.mode_repay()
 		} else {
 			cmp = this.mode_pay()
 		}
 		cards.sort(cmp)
-		for (var i = 0; i < cards.length; i++)
-			cards[i].id = i
+		for (var i = 0; i < cards.length; i++) {
+			var card = cards[i]
+			var t = card.peroidstop
+			card.id = i
+			card.tips_date = t.getFullYear() + "-" + (t.getMonth() + 1) + '-' + t.getDate()
+		}
 		this.setData(this.data)
 	},
 	onShow() {
@@ -119,7 +125,11 @@ Page({
 			_this.data.cards = res
 			for (var i = 0; i < res.length; i++) {
 				var card = res[i]
-				card.bank = conf.banks[conf.getfull(card.bank)].short
+				console.log(card.bank)
+				var idx = conf.getfull(card.bank)
+				var info = conf.banks[idx]
+				card.bankshort = info.short
+				card.background = info.color
 			}
 			_this.refresh()
 		}).catch((err)=>{
@@ -142,5 +152,10 @@ Page({
 			this.data.modetips = tips_mode_pay
 		}
 		this.refresh()
+	},
+	cb_accounting() {
+		wx.navigateTo({
+			url: '../accounting/accounting?param=' + JSON.stringify(this.data.cards)
+		})
 	}
 })

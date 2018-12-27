@@ -1,0 +1,45 @@
+<custom style="height:65px">
+  <bar class="fixed gradual-blue" style="height:65px;padding-top:20px;">
+    <navigator class='action' open-type="navigateBack" delta="1" hover-class="none">
+      <icon class='icon-back' /> 记账
+    </navigator>
+  </bar>
+</custom>
+<view id="container" class="background margin-xl padding-xl bg-cyan radius shadow-lg">
+	<view>
+		<view class="flex align-center justify-between">
+			<view class="text-lg "> 消费:</view>
+			<input class="bg-gray border shadow radius" style="padding-left:10px;" bindinput="cb_money" type="number" value="{{money}}"/>
+			<button class="shadow margin-tb-sm text-center radius bg-green" bindtap="cb_accounting">记帐</button>
+		</view>
+		<view class="flex align-center justify-between">
+			<view class="text-lg "> 卡片:</view>
+			<picker-view
+				class="picker shadow"
+				indicator-class="indicator"
+				value="{{card_index}}"
+				bindchange="cb_card">
+				<picker-view-column>
+					<view wx:key="item" wx:for="{{cards}}"
+						class="bg-gray text-center radius shadow-blur" style="line-height:35px;">
+						{{item.bankshort}}
+						{{item.tail}}
+					</view>
+				</picker-view-column>
+			</picker-view>
+			<button class="shadow margin-tb-sm text-center radius bg-blue" bindtap="cb_add">添加</button>
+		</view>
+		<view class="bg-gray radius grid col-1 margin-bottom" style="margin-top:30px;">
+			<view class="radius border shadow margin-sm padding bg-{{item.background}} flex flex-direction" 
+				wx:key="item" bindtap="cb_del"
+				wx:for="{{accounting_cards}}" data-index="{{index}}">
+				<view class="flex">
+					<view class="text-lg" style="margin-right:10px;">{{item.bankshort}}</view>
+					<view class="text-lg">{{item.tail}}</view>
+				</view>
+				<view class="text-lg">额度: {{item.limit}}</view>
+				<view class="text-lg">应还: {{item.cost_str}}</view>
+			</view>
+		</view>
+	</view>
+</view>

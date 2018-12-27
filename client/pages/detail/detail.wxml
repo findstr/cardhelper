@@ -1,49 +1,74 @@
-<view id="container">
+<custom style="height:65px">
+  <bar class="fixed gradual-blue" style="height:65px;padding-top:20px;">
+    <navigator class='action' open-type="navigateBack" delta="1" hover-class="none">
+      <icon class='icon-back' /> 卡片信息
+    </navigator>
+  </bar>
+</custom>
+<view id="container"  class="background margin-xl padding-xl bg-{{background}} radius shadow-lg">
 	<view class="item-column">
-		<view class="item-row">
-			<view class="text"> 发卡银行:</view> 
+		<view class="item-row padding">
+			<view class="text"> 发卡银行:</view>
 			<picker-view
-				class="picker"
+				class="picker radius shadow"
 				indicator-class="indicator"
 				value="{{bank_value}}"
 				bindchange="bank_change">
 				<picker-view-column>
-					<view wx:key="item" wx:for="{{banks}}" style="text-align:center;line-height:35px;">{{item.full}}</view>
+					<view wx:key="item" wx:for="{{banks}}"
+						class="bg-gray text-center radius shadow-blur" style="line-height:35px;">
+						{{item.full}}
+					</view>
 				</picker-view-column>
 			</picker-view>
 		</view>
-		<view class="item-row"><view class="text"> 卡号:</view> <input bindinput="num_change" type="text" value="{{num}}"/></view>
-		<view class="item-row"><view class="text"> 额度:</view> <input bindinput="limit_change" type="number" value="{{limit}}"/></view>
-		<view class="item-row"><view class="text"> 应还:</view> <input bindinput="cost_change" type="digit" value="{{cost}}"/></view>
-		<view class="item-row">
-			<view class="text"> 帐单日:</view>
+		<view class="item-row padding">
+			<view class="text"> 卡号:</view>
+			<input bindinput="num_change" type="text" value="{{num}}"/>
+		</view>
+		<view class="item-row padding">
+			<view class="text"> 额度:</view>
+			<input bindinput="limit_change" type="number" value="{{limit}}"/>
+		</view>
+		<view class="item-row padding">
+			<view class="text"> 应还:</view>
+			<input bindinput="cost_change" type="digit" value="{{cost}}"/>
+		</view>
+		<view class="item-row padding">
+			<view class="text text-center"> 帐单日:</view>
 				<picker-view
-					class="picker"
+					class="picker radius shadow bg-gray"
 					indicator-class="indicator"
 					value="{{bill_value}}"
 					bindchange="billingday_change">
 					<picker-view-column>
-						<view wx:key="item" wx:for="{{days}}" style="text-align:center;line-height:35px;">{{item}}日</view>
+						<view wx:key="item" wx:for="{{days}}"
+							class="bg-gray text-center radius shadow-blur" style="line-height:35px;">
+							{{item}}日
+						</view>
 					</picker-view-column>
 				</picker-view>
 		</view>
-		<view class="item-row">
+		<view class="item-row padding">
 			<view class="text"> 还款日:</view>
 			<picker-view
-				class="picker"
+				class="picker radius shadow bg-gray"
 				indicator-class="indicator"
 				value="{{repay_value}}"
 				bindchange="repaymentdate_change">
 				<picker-view-column>
-					<view wx:key="item" wx:for="{{days}}" style="text-align:center;line-height:35px;">{{item}}日</view>
+					<view wx:key="item" wx:for="{{days}}"
+						class="bg-gray text-center radius shadow-blur" style="line-height:35px;">
+						{{item}}日
+					</view>
 				</picker-view-column>
 			</picker-view>
 		</view>
-		<view class="item-row">
-			<button class="-ui-button" bindtap="cb_delete">删除</button>
-			<button class="-ui-button" bindtap="cb_repay" wx:if="{{!repaid}}">还清</button>
-			<button class="-ui-button" bindtap="cb_bill" wx:else>出帐</button>
-			<button class="-ui-button" bindtap="cb_save">保存</button>
+		<view class="item-row padding">
+			<button class="shadow margin-tb-sm text-center round bg-red" bindtap="cb_delete">删除</button>
+			<button class="shadow margin-tb-sm text-center round bg-green" bindtap="cb_repay" wx:if="{{!repaid}}">还清</button>
+			<button class="shadow margin-tb-sm text-center round bg-yellow" bindtap="cb_bill" wx:else>出帐</button>
+			<button class="shadow margin-tb-sm text-center round bg-white" bindtap="cb_save">保存</button>
 		</view>
 	</view>
 </view>

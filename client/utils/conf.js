@@ -1,13 +1,14 @@
 module.exports = {
-        server: 'https://cardhelper.weixin.gotocoding.com',
+       	server: 'https://cardhelper.weixin.gotocoding.com',
+	//server: 'http://192.168.2.118:9001',
 	banks: [
-		{ full: '中国银行', short: '中行' },
-		{ full: '建设银行', short: '建行' },
-		{ full: '工商银行', short: '工行' },
-		{ full: '交通银行', short: '交行' },
-		{ full: '招商银行', short: '招行' },
-		{ full: '浦发银行', short: '浦发' },
-		{ full: '广发银行', short: '广发' }
+		{ full: '中国银行', short: '中行', color: "orange"},
+		{ full: '建设银行', short: '建行', color: "blue"},
+		{ full: '工商银行', short: '工行', color: "purple"},
+		{ full: '交通银行', short: '交行', color: "mauve"},
+		{ full: '招商银行', short: '招行', color: "pink"},
+		{ full: '浦发银行', short: '浦发', color: "brown"},
+		{ full: '广发银行', short: '广发', color: "red"}
 	],
 	getshort(name) {
 		var banks = this.banks
@@ -16,7 +17,7 @@ module.exports = {
 				return i
 			}
 		}
-		return -1
+		return 0
 	},
 	getfull(name) {
 		var banks = this.banks
@@ -25,6 +26,6 @@ module.exports = {
 				return i
 			}
 		}
-		return -1
+		return 0
 	}
 }
