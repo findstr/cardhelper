@@ -31,6 +31,8 @@ Page({
                 _this.data.billed = _this.data.billed || 0
                 _this.data.billing = _this.data.billing.toFixed(2)
                 _this.data.billed = _this.data.billed.toFixed(2)
+		_this.data.bill_start = new Date(_this.data.bill_start)
+		_this.data.bill_stop = new Date(_this.data.bill_stop)
 		_this.data.repaid = _this.data.repay_date != 0
 		_this.setData(_this.data)
 		_this.refresh()

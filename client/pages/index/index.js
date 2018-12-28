@@ -61,13 +61,14 @@ Page({
 		var cards = this.data.cards
 		for (var i = 0; i < cards.length; i++) {
 			var card = cards[i]
+			var bill_start = card.bill_start
+			var bill_stop = card.bill_stop
 			if (card.bill_type == conf.TYPE_REPAY) {
-				card.bill_type = conf.TYPE_BILL
-				card.bill_stop = new Date(card.bill_start.getTime())
-				card.bill_stop.setMonth(card.bill_stop.getMonth() + 1)
+				bill_stop = new Date(bill_start.getTime())
+				bill_stop.setMonth(bill_stop.getMonth() + 1)
 			}
 			var total = 31
-			card.tips_num = (card.bill_stop - today) / 86400000
+			card.tips_num = (bill_stop - today) / 86400000
 			card.tips_str = "天后出帐"
 			card.tips_color = this.data.modecolor
 			card.tips_progress = 100 - card.tips_num / total * 100
@@ -164,5 +165,14 @@ Page({
 		wx.navigateTo({
 			url: '../accounting/accounting?param=' + JSON.stringify(this.data.cards)
 		})
-	}
+	},
+	formSubmit(e) {
+		/*
+		var HTTP = app.HTTP
+		HTTP.post('/monitor', {
+			formid:e.detail.formId
+		})
+		console.log('form发生了submit事件，携带数据为：', e)
+		*/
+	},
 })

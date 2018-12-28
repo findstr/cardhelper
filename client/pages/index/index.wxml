@@ -4,11 +4,11 @@
     <view class='content'>帐单列表</view>
   </bar>
 </custom>
-<view>
-	<view id="container" class="flex flex-direction background shadow-lg bg-cyan">
+<form bindsubmit="formSubmit" report-submit>
+	<button id="container" class="flex flex-direction align-start background shadow-lg bg-cyan"  form-type="submit">
                 <view class="flex align-center justify-between">
                         <view id="mode" class="padding {{modecolor}}" bindtap="cb_mode">{{modetips}}</view>
-                        <view class="flex flex-direction" bindtap="cb_accounting">
+                        <view class="background flex flex-direction" bindtap="cb_accounting">
                                 <view id="summary" class="flex" style="backgorund-color:#4CAF50;">
                                         <view class="text">截止{{summary.day}}日</view>
                                         <view class="text">卡数:{{summary.count}}</view>
@@ -16,15 +16,15 @@
                                 </view>
                         </view>
                 </view>
-                 <view id="summary" class="flex justify-end">
+                 <view id="summary" class="flex justify-between">
                         <view class="text">已出帐:{{summary.billed}}元</view>
                         <view class="text">未出帐:{{summary.billing}}元</view>
                 </view>
-	</view>
+	</button>
         <view wx:for="{{cards}}" wx:key="index">
-                <view id="container"
-			class="background shadow bg-{{item.background}} flex flex-direction"
-			 data-id="{{item.id}}" bindtap="cb_detail" >
+                <button id="container"
+			class="background shadow bg-{{item.background}} flex flex-direction align-start"
+			 data-id="{{item.id}}" bindtap="cb_detail"  form-type="submit">
 			<view id="card" class="flex">
 				<view class="flex flex-direction">
 					<view class="flex">
@@ -49,7 +49,7 @@
 					</view>
 				</view>
 			</view>
-        		<view class="flex">
+        		<view class="flex ">
 				<view class="text">已出账:{{item.billed_str}}元 </view>
                                 <view class="text">未出账:{{item.billing_str}}元 </view>
 			</view>
@@ -58,10 +58,11 @@
 					<view class="{{item.tips_color}}"style="width:{{item.tips_progress}}%;"></view>
 				</progress-bar>
 			</view>
-                </view>
+                </button>
         </view>
-	<view class="flex ">
-        	<button class="padding margin-tb-sm lg bg-red" bindtap="cb_detail">添加卡片</button>
-        	<button class="padding margin-tb-sm lg bg-red" bindtap="cb_accounting">记一笔</button>
+	<view class="flex justify-between">
+        	<button class="bg-red" bindtap="cb_detail"  form-type="submit">添加卡片</button>
+        	<button class="bg-red" bindtap="cb_accounting" form-type="submit">记一笔</button>
+		<button class="bg-white" form-type="submit">账单提醒</button>
 	</view>
-</view>
+</form>
