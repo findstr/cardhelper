@@ -13,12 +13,10 @@ core.start(function()
 	local auth = require "auth"
 	require "card"
 	server.listen(assert(core.envget("listen")), function(fd, req, body)
-		core.log(req.uri)
-		core.log(req.version)
 		req.openid = false
 		body = json.decode(body)
 		local sess = req.session
-		print(body, json.encode(req))
+		core.log("request", req.uri, json.encode(req), body)
 		if sess then
 			if #sess > 16 then
 				req.openid = req.session
@@ -35,7 +33,7 @@ core.start(function()
 		if c then
 			c(fd, req, body)
 		else
-			print("Unsupport uri", req.uri)
+			core.log("Unsupport uri", req.uri)
 			write(fd, 404,
 				{"Content-Type: text/plain"},
 				"404 Page Not Found")

@@ -57,7 +57,6 @@ dispatch["/userinfo"] = function(fd, req, body)
 	local dat = body['data']
 	local ok, user = db:hget(dbk_user, req.openid)
 	user = proto:decode("user", user)
-	print(req.openid, ok, user)
 	iv = crypt.base64decode(iv)
 	key = crypt.base64decode(user.session_key)
 	dat = crypt.base64decode(dat)
