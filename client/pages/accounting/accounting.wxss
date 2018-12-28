@@ -1,10 +1,5 @@
 @import "../common/ui.wxss";
 
-input,.picker {
-  width: 60%;
-  height: 35px;
-}
-
 #container {
   margin: 20px;
   border-radius: 10px;
@@ -25,4 +20,9 @@ input,.picker {
   bottom: -8px;
   opacity: 0.2;
   transform: scale(1, 1);
+}
+
+.text {
+	font-size:22px;
+	padding-left:10px;
 }

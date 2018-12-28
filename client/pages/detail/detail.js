@@ -5,8 +5,8 @@ Page({
 	data: {},
 	refresh() {
 		var data = this.data
-		data.bill_value = [data.billday - 1]
-		data.repay_value = [data.repayday - 1]
+		data.bill_value = data.billday - 1
+		data.repay_value = data.repayday - 1
 		console.log("refresh", data)
 		this.setData(data)
 	},
@@ -22,10 +22,12 @@ Page({
 		_this.data.billday = _this.data.billday || 1
 		_this.data.repayday = _this.data.repayday || 1
 		_this.data.days = days
-		_this.data.banks = conf.banks
+		_this.data.banks = []
+		for (var i = 0; i < conf.banks.length; i++)
+			_this.data.banks.push(conf.banks[i].full)
 		var idx = conf.getshort(_this.data.bankshort)
 		var info = conf.banks[idx]
-		_this.data.bank_value = [idx]
+		_this.data.bank_value = idx
 		_this.data.background = info.color
                 _this.data.billing = _this.data.billing || 0
                 _this.data.billed = _this.data.billed || 0
@@ -41,9 +43,9 @@ Page({
 		var data = this.data
 		var idx = e.detail.value[0]
 		console.log(data.banks)
-		data.bank_value = [idx]
-		data.bank = data.banks[idx].full
-		data.background = data.banks[idx].color
+		data.bank_value = idx
+		data.bank = conf.banks[idx].full
+		data.background = conf.banks[idx].color
 		console.log("change", this.data.bank_value, this.data.bank)
 		this.refresh()
 	},

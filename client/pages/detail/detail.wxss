@@ -29,19 +29,15 @@
 	margin-right:10px;
 }
 
-input {
-	width:60%;
+input, .input {
+	padding-left:10px;
+}
+
+.text {
 	font-size:22px;
-	border-radius:4px;
-	border:1px solid #c8cccf;
 }
 
 .indicator {
   height: 35px;
   border: 1px;
-}
-
-.picker {
-  width: 60%;
-  height: 35px;
 }

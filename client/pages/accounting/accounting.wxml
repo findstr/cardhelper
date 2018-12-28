@@ -9,24 +9,19 @@
 	<view>
 		<view class="flex align-center justify-between">
 			<view class="text-lg "> 消费:</view>
-			<input class="bg-gray border shadow radius" style="padding-left:10px;" bindinput="cb_money" type="number" value="{{money}}"/>
-			<button class="shadow margin-tb-sm text-center radius bg-green" bindtap="cb_accounting">记帐</button>
+			<input class="bg-gray border shadow radius text-center" style="padding-left:10px;"
+			        bindinput="cb_money"  type="number" value="{{money}}"/>
+			<button class="shadow margin-tb-sm text-center radius bg-green"
+                		bindtap="cb_accounting">记帐</button>
 		</view>
 		<view class="flex align-center justify-between">
-			<view class="text-lg "> 卡片:</view>
-			<picker-view
-				class="picker shadow"
-				indicator-class="indicator"
-				value="{{card_index}}"
-				bindchange="cb_card">
-				<picker-view-column>
-					<view wx:key="item" wx:for="{{cards}}"
-						class="bg-gray text-center radius shadow-blur" style="line-height:35px;">
-						{{item.bankshort}}
-						{{item.tail}}
-					</view>
-				</picker-view-column>
-			</picker-view>
+			<view class="text-lg "> 卡片:</view>    
+                        <picker class="flex bg-gray border shadow radius justify-center align-center" 
+                            bindchange="cb_card" value="{{card_index}}" range="{{cards_alias}}">
+                            <view>
+                                {{cards_alias[card_index]}}
+                            </view>
+                        </picker>
 			<button class="shadow margin-tb-sm text-center radius bg-blue" bindtap="cb_add">添加</button>
 		</view>
 		<view class="bg-gray radius grid col-1 margin-bottom" style="margin-top:30px;">

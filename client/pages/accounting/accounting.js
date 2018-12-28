@@ -6,8 +6,9 @@ Page({
 	 * 页面的初始数据
 	 */
 	data: {
-		card_index: [0],
+		card_index: 0,
 		cards: [],
+                cards_alias: [],
 		accounting_cards: [],
 		money: 333
 	},
@@ -46,8 +47,10 @@ Page({
 		var dat = options.param
 		var cards = JSON.parse(dat)
 		this.data.cards = cards
+                var cards_alias = this.data.cards_alias
 		for (var i = 0; i < cards.length; i++) {
                         var card = cards[i]
+                        cards_alias.push(card.bankshort + "   " + card.tail)
 			card.billed = card.billed.toFixed(2)
                         card.billing = card.billing.toFixed(2)
                 }
@@ -57,7 +60,7 @@ Page({
 	},
 	cb_add(e) {
 		var data = this.data
-		var idx = this.data.card_index[0]
+		var idx = this.data.card_index
 		var card = this.data.cards[idx]
 		var accounting_cards = data.accounting_cards
 		for (var i = 0; i < accounting_cards.length; i++) {
@@ -81,6 +84,7 @@ Page({
 	},
 	cb_card(e) {
 		this.data.card_index = e.detail.value
+                this.setData({card_index: this.data.card_index})
 		console.log(this.data.card_index)
 	},
 	cb_accounting(e) {

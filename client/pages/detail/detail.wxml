@@ -9,18 +9,30 @@
 	<view class="item-column">
 		<view class="item-row padding">
 			<view class="text"> 发卡银行:</view>
-			<picker-view
-				class="picker radius shadow"
-				indicator-class="indicator"
-				value="{{bank_value}}"
-				bindchange="bank_change">
-				<picker-view-column>
-					<view wx:key="item" wx:for="{{banks}}"
-						class="bg-gray text-center radius shadow-blur" style="line-height:35px;">
-						{{item.full}}
-					</view>
-				</picker-view-column>
-			</picker-view>
+                        <picker bindchange="bank_change" class = "flex border align-center" 
+				value="{{bank_value}}" range="{{banks}}">
+				<view class="input">
+					{{banks[bank_value]}}
+				</view>
+                        </picker>
+		</view>
+		<view class="item-row padding">
+			<view class="text text-center"> 帐单日:</view>
+                        <picker bindchange="billday_change" class = "flex border align-center" 
+				value="{{bill_value}}" range="{{days}}">
+				<view class="input">
+					{{days[bill_value]}}日
+				</view>
+                        </picker>
+		</view>
+		<view class="item-row padding">
+			<view class="text"> 还款日:</view>
+			<picker bindchange="repayday_change" class = "flex border align-center" 
+				value="{{repay_value}}" range="{{days}}">
+				<view class="input">
+					{{days[repay_value]}}日
+				</view>
+			</picker>
 		</view>
 		<view class="item-row padding">
 			<view class="text"> 卡号:</view>
@@ -37,36 +49,6 @@
                 <view class="item-row padding">
 			<view class="text"> 未出账:</view>
 			<input bindinput="billing_change" type="digit" value="{{billing}}"/>
-		</view>
-		<view class="item-row padding">
-			<view class="text text-center"> 帐单日:</view>
-				<picker-view
-					class="picker radius shadow bg-gray"
-					indicator-class="indicator"
-					value="{{bill_value}}"
-					bindchange="billday_change">
-					<picker-view-column>
-						<view wx:key="item" wx:for="{{days}}"
-							class="bg-gray text-center radius shadow-blur" style="line-height:35px;">
-							{{item}}日
-						</view>
-					</picker-view-column>
-				</picker-view>
-		</view>
-		<view class="item-row padding">
-			<view class="text"> 还款日:</view>
-			<picker-view
-				class="picker radius shadow bg-gray"
-				indicator-class="indicator"
-				value="{{repay_value}}"
-				bindchange="repayday_change">
-				<picker-view-column>
-					<view wx:key="item" wx:for="{{days}}"
-						class="bg-gray text-center radius shadow-blur" style="line-height:35px;">
-						{{item}}日
-					</view>
-				</picker-view-column>
-			</picker-view>
 		</view>
 		<view class="item-row padding">
 			<button class="shadow margin-tb-sm text-center round bg-red" bindtap="cb_delete">删除</button>
