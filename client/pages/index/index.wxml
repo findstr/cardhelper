@@ -33,8 +33,8 @@
                                                 <view class="text">额度:{{item.limit}}元 </view>
 					</view>
 					<view class="flex">
-						<view class="text">帐单日:{{item.billingday}}日</view>
-						<view class="text">还款日:{{item.repaymentdate}}日</view>
+						<view class="text">帐单日:{{item.billday}}日</view>
+						<view class="text">还款日:{{item.repayday}}日</view>
 					</view>
 				</view>
 				<view id="tips" class="flex">

@@ -44,7 +44,7 @@
 					class="picker radius shadow bg-gray"
 					indicator-class="indicator"
 					value="{{bill_value}}"
-					bindchange="billingday_change">
+					bindchange="billday_change">
 					<picker-view-column>
 						<view wx:key="item" wx:for="{{days}}"
 							class="bg-gray text-center radius shadow-blur" style="line-height:35px;">
@@ -59,7 +59,7 @@
 				class="picker radius shadow bg-gray"
 				indicator-class="indicator"
 				value="{{repay_value}}"
-				bindchange="repaymentdate_change">
+				bindchange="repayday_change">
 				<picker-view-column>
 					<view wx:key="item" wx:for="{{days}}"
 						class="bg-gray text-center radius shadow-blur" style="line-height:35px;">

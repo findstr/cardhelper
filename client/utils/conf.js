@@ -10,6 +10,8 @@ module.exports = {
 		{ full: '浦发银行', short: '浦发', color: "brown"},
 		{ full: '广发银行', short: '广发', color: "red"}
 	],
+	TYPE_BILL: 1,
+	TYPE_REPAY: 2,
 	getshort(name) {
 		var banks = this.banks
 		for (var i = 0; i < banks.length; i++) {
@@ -27,5 +29,15 @@ module.exports = {
 			}
 		}
 		return 0
+	},
+	someday(day) {
+		var today = new Date();
+		if (day != undefined && day != 0)
+			today.setDate(day)
+		today.setHours(0)
+		today.setMinutes(0)
+		today.setSeconds(0)
+		today.setMilliseconds(0)
+		return today
 	}
 }

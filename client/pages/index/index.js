@@ -1,6 +1,5 @@
 const app = getApp()
 var conf = require("../../utils/conf")
-var bill = require("../../utils/bill")
 var color_mode_repay = 'red'
 var color_mode_pay = 'green'
 var tips_mode_repay = "还"
@@ -19,24 +18,24 @@ Page({
 		modetips: tips_mode_repay
         },
 	mode_repay() {
-		var today = bill.someday()
+		var today = conf.someday()
 		var cards = this.data.cards
 		for (var i = 0; i < cards.length; i++) {
 			var card = cards[i]
-			if (card.peroid == "repayment") {
+			if (card.bill_type == conf.TYPE_REPAY) {
 				var repay = new Date(card.repay_date * 1000)
-				if (repay.getTime() == card.peroidstop.getTime()) {
-					var t = new Date(card.peroidstart.getTime())
+				if (repay.getTime() == card.bill_stop.getTime()) {
+					var t = new Date(card.bill_start.getTime())
 					t.setMonth(t.getMonth() + 1)
-					card.peroid = "billing"
-					card.peroidstop = t
+					card.bill_type = conf.TYPE_BILL
+					card.bill_stop = t
 				} else {
 					card.tips_str = "天后还款"
 					card.tips_color = 'bg-yellow'
 				}
 			}
-			card.tips_num = (card.peroidstop - today) / 86400000
-			if (card.peroid == "billing") {
+			card.tips_num = (card.bill_stop - today) / 86400000
+			if (card.bill_type == conf.TYPE_BILL) {
 				console.log(card)
 				card.tips_str = "天后出帐"
 				card.tips_color = 'bg-green'
@@ -45,7 +44,7 @@ Page({
 			card.tips_progress = 100 - card.tips_num / total * 100
 		}
 		return function(a, b) {
-			if (a.peroid == b.peroid) {
+			if (a.bill_type == b.bill_type) {
 				if (a.tips_num > b.tips_num)
 					return 1
 				else if (a.tips_num < b.tips_num)
@@ -53,24 +52,22 @@ Page({
 				else
 					return 0
 			} else {
-				return a.peroid == "repayment" ? -1 : 1
+				return a.bill_type == conf.TYPE_REPAY ? -1 : 1
 			}
 		}
 	},
 	mode_pay() {
-		var today = bill.someday()
+		var today = conf.someday()
 		var cards = this.data.cards
 		for (var i = 0; i < cards.length; i++) {
 			var card = cards[i]
-			if (card.peroid == "repayment") {
-				card.proid = "billing"
-				card.peroidstop = new Date(card.peroidstart.getTime())
-				card.peroidstop.setMonth(card.peroidstop.getMonth() + 1)
-			} else {
-
+			if (card.bill_type == conf.TYPE_REPAY) {
+				card.bill_type = conf.TYPE_BILL
+				card.bill_stop = new Date(card.bill_start.getTime())
+				card.bill_stop.setMonth(card.bill_stop.getMonth() + 1)
 			}
 			var total = 31
-			card.tips_num = (card.peroidstop - today) / 86400000
+			card.tips_num = (card.bill_stop - today) / 86400000
 			card.tips_str = "天后出帐"
 			card.tips_color = this.data.modecolor
 			card.tips_progress = 100 - card.tips_num / total * 100
@@ -88,7 +85,7 @@ Page({
 		var cmp
 		var data = this.data
 		var cards = data.cards;
-		var today = bill.someday()
+		var today = conf.someday()
 		var summary = data.summary
 		summary.day = today.getDate()
 		summary.count = cards.length
@@ -99,11 +96,10 @@ Page({
 			var delta
 			var card = cards[i]
 			card.tail = ("0000" + card.num.toString()).slice(-4)
-			bill.typeof_peroid(card)
+			console.log(card.bill_start, card.bill_stop)
                         card.billing = card.billing || 0
 			card.billed_str = card.billed.toFixed(2)
                         card.billing_str = card.billing.toFixed(2)
-                        console.log(card)
 			data.summary.limit += card.limit
 			data.summary.billed += card.billed
                         data.summary.billing += card.billing
@@ -118,7 +114,7 @@ Page({
 		cards.sort(cmp)
 		for (var i = 0; i < cards.length; i++) {
 			var card = cards[i]
-			var t = card.peroidstop
+			var t = card.bill_stop
 			card.id = i
 			card.tips_date = t.getFullYear() + "-" + (t.getMonth() + 1) + '-' + t.getDate()
 		}
@@ -137,6 +133,10 @@ Page({
 				var info = conf.banks[idx]
 				card.bankshort = info.short
 				card.background = info.color
+				console.log(card)
+				card.bill_start = new Date(card.bill_start * 1000)
+				card.bill_stop = new Date(card.bill_stop * 1000)
+				console.log(card.bill_start, card.bill_stop)
 			}
 			_this.refresh()
 		}).catch((err)=>{

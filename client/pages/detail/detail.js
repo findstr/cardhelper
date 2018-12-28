@@ -5,8 +5,8 @@ Page({
 	data: {},
 	refresh() {
 		var data = this.data
-		data.bill_value = [data.billingday - 1]
-		data.repay_value = [data.repaymentdate - 1]
+		data.bill_value = [data.billday - 1]
+		data.repay_value = [data.repayday - 1]
 		console.log("refresh", data)
 		this.setData(data)
 	},
@@ -19,8 +19,8 @@ Page({
 		var days = []
 		for (var i = 0; i < 31; i++)
 			days[i] = i + 1
-		_this.data.billingday = _this.data.billingday || 1
-		_this.data.repaymentdate = _this.data.repaymentdate || 1
+		_this.data.billday = _this.data.billday || 1
+		_this.data.repayday = _this.data.repayday || 1
 		_this.data.days = days
 		_this.data.banks = conf.banks
 		var idx = conf.getshort(_this.data.bankshort)
@@ -61,17 +61,17 @@ Page({
                 this.data.billing = e.detail.value
                 this.refresh()
         },
-	billingday_change(e) {
-		this.data.billingday = e.detail.value[0] + 1
+	billday_change(e) {
+		this.data.billday = e.detail.value[0] + 1
 		this.refresh()
 	},
-	repaymentdate_change(e) {
-		this.data.repaymentdate = e.detail.value[0] + 1
+	repayday_change(e) {
+		this.data.repayday = e.detail.value[0] + 1
 		this.refresh()
 	},
 	cb_save() {
 		var HTTP = app.HTTP
-		console.log(this.data.bank, this.data.limit, this.data.billed, this.data.billingday, this.data.repaymentdate)
+		console.log(this.data.bank, this.data.limit, this.data.billed, this.data.billday, this.data.repayday)
 		var data = this.data
                 if (data.billing == "")
                         data.billing = "0"
@@ -84,8 +84,8 @@ Page({
 			limit: parseFloat(data.limit),
 			billed: parseFloat(data.billed),
                         billing: parseFloat(data.billing),
-			billingday: parseInt(data.billingday),
-			repaymentdate: parseInt(data.repaymentdate),
+			billday: parseInt(data.billday),
+			repayday: parseInt(data.repayday),
 			repay_date: data.repay_date
 		}).then((res) => {
 			wx.navigateBack({
@@ -107,7 +107,7 @@ Page({
 	cb_repay() {
 		var data = this.data
 		data.billed = 0
-		data.repay_date = data.peroidstop.getTime() / 1000
+		data.repay_date = data.bill_stop.getTime() / 1000
 		this.cb_save()
 	},
 	cb_bill() {

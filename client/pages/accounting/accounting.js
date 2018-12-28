@@ -102,8 +102,8 @@ Page({
 				limit: parseFloat(data.limit),
 				billed: parseFloat(data.billed),
                                 billing: parseFloat(data.billing),
-				billingday: parseInt(data.billingday),
-				repaymentdate: parseInt(data.repaymentdate),
+				billday: parseInt(data.billday),
+				repayday: parseInt(data.repayday),
 				repay_date: data.repay_date
 			}).then((res) => {
 				if (--pending <= 0) {
