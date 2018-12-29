@@ -14,9 +14,11 @@ core.start(function()
 	require "card"
 	server.listen(assert(core.envget("listen")), function(fd, req, body)
 		req.openid = false
-		body = json.decode(body)
+		core.log("request", req.uri, json.encode(req), body, err)
+		if #body ~= 0 then
+			body = json.decode(body)
+		end
 		local sess = req.session
-		core.log("request", req.uri, json.encode(req), body)
 		if sess then
 			if #sess > 16 then
 				req.openid = req.session

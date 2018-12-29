@@ -17,6 +17,10 @@ user {
 	.unionid:string 3
 	.nickname:string 4
 	.session:string 5
+	.accesstoken:string 6
+	.accessexpire:uinteger 7
+	.formid:string 8
+	.formexpire:uinteger 9
 }
 ]]
 
@@ -30,6 +34,9 @@ local req_url = 'https://api.weixin.qq.com/sns/jscode2session?appid=' ..
 	core.envget("appid") ..
 	'&secret=' .. core.envget("secret") ..
 	'&js_code=%s&grant_type=authorization_code'
+
+local token_url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' ..
+	core.envget("appid") .. '&secret=' .. core.envget("secret")
 
 dispatch["/login"] = function(fd, req, body)
 	local code = body['code']
@@ -69,6 +76,74 @@ dispatch["/userinfo"] = function(fd, req, body)
 	})
 	print(ack)
 	write(fd, 200, nil, ack)
+end
+
+local function getuser(openid)
+	local ok, user = db:hget(dbk_user, openid)
+	user = proto:decode("user", user)
+	print(json.encode(user))
+	return user
+end
+
+local function saveuser(user)
+	local dat = proto:encode("user", user)
+	db:hset(dbk_user, user.openid, dat)
+end
+
+local function checktoken(openid)
+	local user = getuser(openid)
+	local now = core.nowsec() // 1000
+	if not user.accessexpire or user.accessexpire < now then
+		local status, _, body = client.GET(token_url)
+		local obj = json.decode(body)
+		user.accessexpire = now + obj.expires_in // 2
+		user.accesstoken = obj.access_token
+		saveuser(user)
+	end
+	return user
+end
+
+dispatch["/monitor"] = function(fd, req, body)
+	local openid = req.openid
+	local now = core.nowsec()
+	user = getuser(openid)
+	user.formid = body.formid
+	user.formexpire = now + 7 * 24 * 3600 - 10
+	print(now, user.formexpire)
+	core.log("monitor", user.openid, user.formid, user.formexpire)
+	saveuser(user)
+end
+
+function M.formexpire(openid)
+	local user = getuser(openid)
+	return user.formexpire
+end
+
+function M.notify(openid, content)
+	local now = core.nowsec()
+	local user = checktoken(openid)
+	print(now)
+	if not user.formexpire or user.formexpire < now then
+		core.log("failed to notify", openid, content, user.formexpire, user.formexpire < now)
+		return
+	end
+	local url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' ..
+		user.accesstoken
+	local param = {
+		touser = user.openid,
+		template_id = '54cmnPhXE05tuDuWzFykXL1L1OjqxNJ_kba6Oq7YZ6g',
+		page = "index",
+		form_id = user.formid,
+		data = {
+			keyword1 = {value = os.date("%Y-%m-%d")},
+			keyword2 = {value = "未来8天内,你有5张信用卡待出账, 8张信用卡待还款"}
+		},
+	}
+	local body = json.encode(param)
+	local status, _, body = client.POST(url, nil, body)
+	user.formexpire = 0
+	saveuser(user)
+	core.log("notify", openid, body)
 end
 
 function M.getopenid(session)
