@@ -112,6 +112,7 @@ dispatch["/monitor"] = function(fd, req, body)
 	print(now, user.formexpire)
 	core.log("monitor", user.openid, user.formid, user.formexpire)
 	saveuser(user)
+	write(fd, 200)
 end
 
 function M.formexpire(openid)
