@@ -133,7 +133,7 @@ function M.notify(openid, content)
 	local param = {
 		touser = user.openid,
 		template_id = '54cmnPhXE05tuDuWzFykXL1L1OjqxNJ_kba6Oq7YZ6g',
-		page = "index",
+		page = "pages/index/index",
 		form_id = user.formid,
 		data = {
 			keyword1 = {value = os.date("%Y-%m-%d")},
