@@ -137,7 +137,7 @@ function M.notify(openid, content)
 		form_id = user.formid,
 		data = {
 			keyword1 = {value = os.date("%Y-%m-%d")},
-			keyword2 = {value = "未来8天内,你有5张信用卡待出账, 8张信用卡待还款"}
+			keyword2 = {value = content}
 		},
 	}
 	local body = json.encode(param)
