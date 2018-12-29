@@ -26,6 +26,7 @@ card {
 	.bill_stop:integer 11
 	.repay_date:integer 12
 	.billing_date:integer 13
+	.notify:integer 14
 }
 ]]
 
@@ -33,6 +34,7 @@ assert(proto, err)
 
 local M = {}
 local dbk_card = "card:%s"
+local dbk_expire = "card:expire"
 
 local function nextmonth(t)
 	t.month = t.month + 1
@@ -149,6 +151,7 @@ local function checkbill(card)
 		else
 			card.billed = 0
 		end
+		card.notify = nil
 		card.billing = 0
 		return true
 	end
@@ -156,6 +159,7 @@ local function checkbill(card)
 end
 
 dispatch["/addcard"] = function(fd, req, body)
+	local openid = req.openid
 	local dbk = format(dbk_card, req.openid)
 	local ok, obj = db:hget(dbk, body.num)
 	if obj then
@@ -172,6 +176,10 @@ dispatch["/addcard"] = function(fd, req, body)
 	end
 	checkbill(body)
 	assert(body.bill_type)
+	local _, score = db:zscore(dbk_expire, openid)
+	if not score or tonumber(score) > body.bill_stop then
+		db:zadd(dbk_expire, body.bill_stop, openid)
+	end
 	local dat = proto:encode("card", body)
 	db:hset(dbk, body.num, dat)
 	write(fd, 200)
@@ -198,5 +206,76 @@ dispatch["/listcard"] = function(fd, req, body)
 	write(fd, 200, nil, json.encode(ack))
 end
 
+local function timer_user(openid)
+	local today = someday()
+	local now = os.time(today)
+	local dbk = format(dbk_card, openid)
+	local _, list = db:hgetall(dbk)
+	local j = 1
+	local cards = {}
+	for i = 1, #list, 2 do
+		local v = list[i+1]
+		local card = proto:decode("card", v)
+		card.dirty = checkbill(card)
+		cards[j] = card
+		j = j + 1
+	end
+	local bill_count = 0
+	local repay_count = 0
+	local future8 = now + 8 * 24 * 3600
+	table.sort(cards, function(a, b)
+		return a.bill_stop < b.bill_stop
+	end)
+	db:zadd(dbk_expire, openid, future8)
+	for _, card in pairs(cards) do
+		if card.bill_stop > future8 then
+			break
+		end
+		local bill_type = card.bill_type
+		if bill_type ~= card.notify then
+			card.notify = bill_type
+			if bill_type == TYPE_BILL then
+				bill_count = bill_count + 1
+			else
+				repay_count = repay_count + 1
+			end
+			card.dirty = true
+		end
+		if card.dirty then
+			local dat = proto:encode("card", card)
+			db:hset(dbk, card.num, dat)
+		end
+	end
+	local strbuf = {"未来8天内"}
+	core.log("timer", os.date("%Y-%m-%d", now), openid, bill_count, repay_count)
+	if repay_count ~= 0 then
+		strbuf[2] = format("%s个信用卡待还清", repay_count)
+	end
+	if bill_count ~= 0 then
+		strbuf[#strbuf + 1] = format("%s个信用卡待出账", bill_count)
+	end
+	if #strbuf > 1 then
+		auth.notify(openid, table.concat(strbuf, ","))
+	end
+end
+
+local function timer_logic()
+	local now = core.now() - 8 * 24 *3600
+	local now = "+inf"
+	local ok, list = db:zrangebyscore(dbk_expire, 0, now)
+	for _, openid in pairs(list) do
+		timer_user(openid)
+	end
+end
+
+local function timer()
+	local ok, err = core.pcall(timer_logic)
+	if not ok then
+		core.log(err)
+	end
+	core.timeout(60000, timer)
+end
+
+core.start(timer)
 
 
