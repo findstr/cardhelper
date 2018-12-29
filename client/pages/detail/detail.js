@@ -66,11 +66,13 @@ Page({
                 this.refresh()
         },
 	billday_change(e) {
-		this.data.billday = e.detail.value[0] + 1
+		console.log(e)
+		this.data.billday = parseInt(e.detail.value) + 1
 		this.refresh()
 	},
 	repayday_change(e) {
-		this.data.repayday = e.detail.value[0] + 1
+		console.log(e)
+		this.data.repayday = parseInt(e.detail.value) + 1
 		this.refresh()
 	},
 	cb_save() {
@@ -82,6 +84,7 @@ Page({
                 if (data.billed == "")
                         data.billed = "0"
                 console.log(parseFloat(data.billing))
+		data.num = data.num || 0
 		HTTP.post('/addcard', {
 			bank: data.bank,
 			num: parseInt(data.num),
