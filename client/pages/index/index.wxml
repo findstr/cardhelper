@@ -1,51 +1,53 @@
 <!--index.wxml-->
-<custom style="height:65px">
-  <bar class="fixed gradual-blue" style="height:65px;padding-top:20px;">
+<custom>
+  <bar class="fixed">
     <view class='content'>帐单列表</view>
   </bar>
 </custom>
 <form bindsubmit="formSubmit" report-submit>
-	<button id="container" class="flex flex-direction align-start background shadow-lg bg-cyan"  form-type="submit">
+	<view>
+	<button id="summary-container" class="flex flex-direction align-start"  form-type="submit">
                 <view class="flex align-center justify-between">
-                        <view id="mode" class="padding {{modecolor}}" bindtap="cb_mode">{{modetips}}</view>
-                        <view class="background flex flex-direction" bindtap="cb_accounting">
-                                <view id="summary" class="flex" style="backgorund-color:#4CAF50;">
-                                        <view class="text">截止{{summary.day}}日</view>
-                                        <view class="text">卡数:{{summary.count}}</view>
-                                        <view class="text">额度:{{summary.limit}}元</view>
+                        <view id="mode" bindtap="cb_mode">{{modetips}}</view>
+                        <view class="flex flex-direction" bindtap="cb_accounting">
+                                <view id="summary" class="flex align-center">
+                                        <view class="text-3">截止{{summary.day}}日</view>
+                                        <view class="text-3">卡数:{{summary.count}}</view>
+                                        <view class="text-3">额度:{{summary.limit}}元</view>
                                 </view>
                         </view>
                 </view>
                  <view id="summary" class="flex justify-between">
-                        <view class="text">已出帐:{{summary.billed}}元</view>
-                        <view class="text">未出帐:{{summary.billing}}元</view>
+                        <view class="text-3">已出帐:{{summary.billed}}元</view>
+                        <view class="text-3">未出帐:{{summary.billing}}元</view>
                 </view>
 	</button>
+	</view>
         <view wx:for="{{cards}}" wx:key="index">
                 <button id="container"
-			class="background shadow bg-{{item.background}} flex flex-direction align-start"
+			class="background bg-{{item.background}} flex flex-direction align-start"
 			 data-id="{{item.id}}" bindtap="cb_detail"  form-type="submit">
 			<view id="card" class="flex">
 				<view class="flex flex-direction">
-					<view class="flex">
-						<view class="text"> {{item.bankshort}} </view>
-						<view class="text"> {{item.tail}} </view>
-                                                <view class="text">额度:{{item.limit}}元 </view>
+					<view id="card-info" class="flex">
+						<view class="text-1"> {{item.bankshort}} </view>
+						<view class="text-1"> {{item.tail}} </view>
+						<view class="text-3 self-end"> 额度:{{item.limit}}元 </view>
 					</view>
 					<view class="flex">
-						<view class="text">帐单日:{{item.billday}}日</view>
-						<view class="text">还款日:{{item.repayday}}日</view>
+						<view class="text-3">帐单日:{{item.billday}}日</view>
+						<view class="text-3">还款日:{{item.repayday}}日</view>
 					</view>
 				</view>
 				<view id="tips" class="flex">
 					<view class="flex">
-						<view id="tips_num" class="text">
+						<view id="tips_num" class="align-center" style="padding-right:10px">
 							{{item.tips_num}}
 						</view>
 					</view>
 					<view id="tips_right" class="flex flex-direction justify-center">
-						<view id="tips_str" class="text">{{item.tips_str}}</view>
-						<view id="tips_date" class="text">{{item.tips_date}}</view>
+						<view id="tips_str" class="text-3">{{item.tips_str}}</view>
+						<view id="tips_date" class="text-3">{{item.tips_date}}</view>
 					</view>
 				</view>
 			</view>
@@ -54,15 +56,15 @@
                                 <view class="text">未出账:{{item.billing_str}}元 </view>
 			</view>
 			<view id="progress" class="{{item.background}}">
-				<progress-bar class="sm striped active" style="height:3px;">
-					<view class="{{item.tips_color}}"style="width:{{item.tips_progress}}%;"></view>
+				<progress-bar class="sm striped active" style="height:1px;">
+					<view class="{{item.tips_color}}" style="width:{{item.tips_progress}}%;"></view>
 				</progress-bar>
 			</view>
                 </button>
         </view>
-	<view class="flex justify-between">
-        	<button class="bg-red" bindtap="cb_detail"  form-type="submit">添加卡片</button>
-        	<button class="bg-red" bindtap="cb_accounting" form-type="submit">记一笔</button>
+	<view class="flex justify-between padding">
+        	<button class="bg-white" bindtap="cb_detail"  form-type="submit">添加卡片</button>
+        	<button class="bg-white" bindtap="cb_accounting" form-type="submit">记一笔</button>
 		<button class="bg-white" form-type="submit">账单提醒</button>
 	</view>
 </form>
