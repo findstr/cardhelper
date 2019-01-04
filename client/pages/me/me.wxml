@@ -21,7 +21,7 @@
   <view class="flex bg-white align-center">
 	<view class="text-2 text-center padding"> 密码: </view>
 	<input  style="padding-left:10px;" placeholder='请输入密码'
-		bindinput="cb_passwd" type="text" value="{{mailpasswd}}"/>
+		bindinput="cb_passwd" type="password" value="{{mailpasswd}}"/>
   </view>
   <view style="padding-bottom:10px;"></view>
   <button class="margin text-1 bg-green" style="width:90%" bindtap="cb_save" form-type="submit">保存</button>
