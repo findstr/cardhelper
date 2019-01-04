@@ -263,6 +263,7 @@ local function rfc822(list, start)
 	assert(obj.charset, charset)
 	obj.charset = obj.charset:lower()
 	local cd = iconv.open("utf-8", obj.charset)
+	obj.raw = body
 	obj.body = cd:iconv(body)
 	return obj
 end
