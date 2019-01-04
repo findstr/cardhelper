@@ -3,10 +3,10 @@ local dispatch = require "router"
 local server = require "http.server"
 local client = require "http.client"
 local helper = require "http.helper"
-local crypt = require "sys.crypt"
 local zproto = require "zproto"
 local json = require "sys.json"
 local auth = require "auth"
+local mail = require "mail"
 local db = require "db".get()
 local write = server.write
 local format = string.format
@@ -60,6 +60,7 @@ local function someday(day)
 	if day then
 		t.day = day
 	end
+	t.wday = nil
 	t.hour = 0
 	t.min = 0
 	t.sec = 0
@@ -84,6 +85,8 @@ local function typeof_bill(card)
 			card.bill_type = TYPE_REPAY
 			card.bill_start = os.time(bill_date)
 			card.bill_stop = os.time(repay_date)
+			print("=========bill_start", card.bill_start, card.bill_stop)
+			print("========", json.encode(bill_date), json.encode(repay_date))
 		else
 			card.bill_type = TYPE_BILL
 			if diff(today, repay_date) > 0 then
@@ -206,6 +209,52 @@ dispatch["/listcard"] = function(fd, req, body)
 	write(fd, 200, nil, json.encode(ack))
 end
 
+local function tryfetchmail(openid, cardlist, strbuf)
+	local mlist = mail.pull(openid)
+	if not mlist or #mlist == 0 then
+		core.log("tryfetchmail check empty", openid)
+		return false
+	end
+	core.log("tryfetchmail process", openid, #mlist)
+	local effect = 0
+	local num_to_card = {}
+	local bank_to_card = {}
+	for _, card in pairs(cardlist) do
+		card._start_date = os.date("*t", card.bill_start)
+		num_to_card[card.num] = card
+		bank_to_card[card.bank] = card
+		core.log("card", json.encode(card))
+	end
+	for _, mail in pairs(mlist) do
+		local card
+		local num = mail.num
+		if num then
+			card = num_to_card[num]
+		else
+			card = bank_to_card[mail.bank]
+		end
+		local n = effect
+		if card then
+			local date = card._start_date
+			if date.year == mail.year and date.month == mail.month then
+				card.billed = mail.cost
+				if mail.limit then
+					card.limit = mail.limit
+				end
+				card._dirty = true
+				effect = effect + 1
+				core.log("mail effect:", openid, json.encode(mail))
+			end
+		end
+		if n == effect then
+			core.log("mail skip:", openid, json.encode(mail))
+		end
+	end
+	if effect > 0 then
+		strbuf[#strbuf + 1] = format("从邮箱更新了%s个帐单", effect)
+	end
+end
+
 local function timer_user(openid)
 	local today = someday()
 	local now = os.time(today)
@@ -216,7 +265,7 @@ local function timer_user(openid)
 	for i = 1, #list, 2 do
 		local v = list[i+1]
 		local card = proto:decode("card", v)
-		card.dirty = checkbill(card)
+		card._dirty = checkbill(card)
 		cards[j] = card
 		j = j + 1
 	end
@@ -239,11 +288,7 @@ local function timer_user(openid)
 			else
 				repay_count = repay_count + 1
 			end
-			card.dirty = true
-		end
-		if card.dirty then
-			local dat = proto:encode("card", card)
-			db:hset(dbk, card.num, dat)
+			card._dirty = true
 		end
 	end
 	local strbuf = {"未来8天内"}
@@ -253,6 +298,13 @@ local function timer_user(openid)
 	end
 	if bill_count ~= 0 then
 		strbuf[#strbuf + 1] = format("%s个信用卡待出账", bill_count)
+	end
+	tryfetchmail(openid, cards, strbuf)
+	for _, card in pairs(cards) do
+		if card._dirty then
+			local dat = proto:encode("card", card)
+			db:hset(dbk, card.num, dat)
+		end
 	end
 	if #strbuf > 1 then
 		auth.notify(openid, table.concat(strbuf, ","))

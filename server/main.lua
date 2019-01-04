@@ -12,6 +12,7 @@ core.start(function()
 	db.start()
 	local auth = require "auth"
 	require "card"
+	require "mail"
 	server.listen(assert(core.envget("listen")), function(fd, req, body)
 		req.openid = false
 		core.log("request", req.uri, json.encode(req), body, err)
@@ -31,6 +32,7 @@ core.start(function()
 				auth.touch(sess)
 			end
 		end
+		print(req.uri)
 		local c = dispatch[req.uri]
 		if c then
 			c(fd, req, body)

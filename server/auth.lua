@@ -38,6 +38,18 @@ local req_url = 'https://api.weixin.qq.com/sns/jscode2session?appid=' ..
 local token_url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' ..
 	core.envget("appid") .. '&secret=' .. core.envget("secret")
 
+local function dbgetuser(openid)
+	local ok, user = db:hget(dbk_user, openid)
+	user = proto:decode("user", user)
+	core.log("dbgetuser", json.encode(user))
+	return user
+end
+
+local function dbsaveuser(user)
+	local dat = proto:encode("user", user)
+	db:hset(dbk_user, user.openid, dat)
+end
+
 dispatch["/login"] = function(fd, req, body)
 	local code = body['code']
 	local status, _, body = client.GET(format(req_url, code))
@@ -62,8 +74,7 @@ end
 dispatch["/userinfo"] = function(fd, req, body)
 	local iv = body['iv']
 	local dat = body['data']
-	local ok, user = db:hget(dbk_user, req.openid)
-	user = proto:decode("user", user)
+	local user = dbgetuser(req.openid)
 	iv = crypto.base64decode(iv)
 	key = crypto.base64decode(user.session_key)
 	dat = crypto.base64decode(dat)
@@ -74,31 +85,19 @@ dispatch["/userinfo"] = function(fd, req, body)
 		nickName = obj.nickName,
 		avatarUrl = obj.avatarUrl
 	})
-	print(ack)
+	core.log(ack)
 	write(fd, 200, nil, ack)
 end
 
-local function getuser(openid)
-	local ok, user = db:hget(dbk_user, openid)
-	user = proto:decode("user", user)
-	print(json.encode(user))
-	return user
-end
-
-local function saveuser(user)
-	local dat = proto:encode("user", user)
-	db:hset(dbk_user, user.openid, dat)
-end
-
 local function checktoken(openid)
-	local user = getuser(openid)
-	local now = core.nowsec() // 1000
+	local user = dbgetuser(openid)
+	local now = core.nowsec()
 	if not user.accessexpire or user.accessexpire < now then
 		local status, _, body = client.GET(token_url)
 		local obj = json.decode(body)
 		user.accessexpire = now + obj.expires_in // 2
 		user.accesstoken = obj.access_token
-		saveuser(user)
+		dbsaveuser(user)
 	end
 	return user
 end
@@ -106,30 +105,32 @@ end
 dispatch["/monitor"] = function(fd, req, body)
 	local openid = req.openid
 	local now = core.nowsec()
-	user = getuser(openid)
+	user = dbgetuser(openid)
 	user.formid = body.formid
 	user.formexpire = now + 7 * 24 * 3600 - 10
-	print(now, user.formexpire)
-	core.log("monitor", user.openid, user.formid, user.formexpire)
-	saveuser(user)
+	core.log("monitor", user.openid, now, user.formid, user.formexpire)
+	dbsaveuser(user)
 	write(fd, 200)
 end
 
 function M.formexpire(openid)
-	local user = getuser(openid)
+	local user = dbgetuser(openid)
 	return user.formexpire
 end
+
+local notify_url =
+'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token='
 
 function M.notify(openid, content)
 	local now = core.nowsec()
 	local user = checktoken(openid)
 	print(now)
 	if not user.formexpire or user.formexpire < now then
-		core.log("failed to notify", openid, content, user.formexpire, user.formexpire < now)
+		core.log("failed to notify", openid, content,
+			user.formexpire, user.formexpire < now)
 		return
 	end
-	local url = 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=' ..
-		user.accesstoken
+	local url = notify_url .. user.accesstoken
 	local param = {
 		touser = user.openid,
 		template_id = '54cmnPhXE05tuDuWzFykXL1L1OjqxNJ_kba6Oq7YZ6g',
@@ -143,7 +144,7 @@ function M.notify(openid, content)
 	local body = json.encode(param)
 	local status, _, body = client.POST(url, nil, body)
 	user.formexpire = 0
-	saveuser(user)
+	dbsaveuser(user)
 	core.log("notify", openid, body)
 end
 
