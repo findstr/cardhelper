@@ -3,7 +3,7 @@
 	<view class='content'>我</view>
   </bar>
 </custom>
-<view class="flex flex-direction">
+<form bindsubmit="formSubmit" report-submit class="flex flex-direction">
   <view class="userinfo margin">
     <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 授权认证 </button>
     <block style="width:100%;" wx:else>
@@ -24,7 +24,5 @@
 		bindinput="cb_passwd" type="text" value="{{mailpasswd}}"/>
   </view>
   <view style="padding-bottom:10px;"></view>
-  <button class="margin text-1 bg-green" bindtap="cb_save">保存</button>
-
-
-</view>
+  <button class="margin text-1 bg-green" bindtap="cb_save" form-type="submit">保存</button>
+</form>

@@ -117,6 +117,7 @@ local function cgbc(d)
 	obj.num = cardinfo[1].child[1]:match("%*(%d+)")
 	obj.cost = tonum(cardinfo[2].child[1])
 	obj.limit = tonum(cardinfo[6].child[1])
+	return obj
 end
 
 local banks = {

@@ -220,10 +220,10 @@ local function tryfetchmail(openid, cardlist, strbuf)
 	local num_to_card = {}
 	local bank_to_card = {}
 	for _, card in pairs(cardlist) do
+		core.log("card", json.encode(card))
 		card._start_date = os.date("*t", card.bill_start)
 		num_to_card[card.num] = card
 		bank_to_card[card.bank] = card
-		core.log("card", json.encode(card))
 	end
 	for _, mail in pairs(mlist) do
 		local card
@@ -315,6 +315,7 @@ local function timer_logic()
 	local now = core.now() - 8 * 24 *3600
 	local now = "+inf"
 	local ok, list = db:zrangebyscore(dbk_expire, 0, now)
+	core.log("timer_logic", ok, list, dbk_expire)
 	for _, openid in pairs(list) do
 		timer_user(openid)
 	end

@@ -78,5 +78,12 @@ Page({
 			})
 			console.log(err)
 		})
-	}
+	}, 
+	formSubmit(e) {
+		var HTTP = app.HTTP
+		HTTP.post('/monitor', {
+			formid: e.detail.formId
+		})
+		console.log('form发生了submit事件，携带数据为：', e)
+	},
 })
