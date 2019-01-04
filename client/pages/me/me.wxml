@@ -24,5 +24,5 @@
 		bindinput="cb_passwd" type="text" value="{{mailpasswd}}"/>
   </view>
   <view style="padding-bottom:10px;"></view>
-  <button class="margin text-1 bg-green" bindtap="cb_save" form-type="submit">保存</button>
+  <button class="margin text-1 bg-green" style="width:90%" bindtap="cb_save" form-type="submit">保存</button>
 </form>

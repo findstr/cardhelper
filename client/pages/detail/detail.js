@@ -28,6 +28,7 @@ Page({
 		var idx = conf.getshort(_this.data.bankshort)
 		var info = conf.banks[idx]
 		_this.data.bank_value = idx
+		_this.data.bank = info.full
 		_this.data.background = info.color
                 _this.data.billing = _this.data.billing || 0
                 _this.data.billed = _this.data.billed || 0
