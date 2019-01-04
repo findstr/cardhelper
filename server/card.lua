@@ -291,7 +291,10 @@ local function timer_user(openid)
 			card._dirty = true
 		end
 	end
-	local strbuf = {"未来8天内"}
+	local strbuf = {}
+	if repay_count > 0 or bill_count > 0 then
+		strbuf[1] = "未来8天内"
+	end
 	core.log("timer", os.date("%Y-%m-%d", now), openid, bill_count, repay_count)
 	if repay_count ~= 0 then
 		strbuf[2] = format("%s个信用卡待还清", repay_count)
