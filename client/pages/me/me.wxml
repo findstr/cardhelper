@@ -3,12 +3,28 @@
 	<view class='content'>我</view>
   </bar>
 </custom>
-<view class="container">
-  <view class="userinfo">
+<view class="flex flex-direction">
+  <view class="userinfo margin">
     <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 授权认证 </button>
-    <block wx:else>
+    <block style="width:100%;" wx:else>
       <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
       <text class="userinfo-nickname">{{userInfo.nickName}}</text>
     </block>
   </view>
+  <view class="line"></view>
+  <view class="flex bg-white align-center">
+	<view class="text-2 text-center padding"> 邮箱: </view>
+	<input style="padding-left:10px;" placeholder='请输入邮箱'
+		bindinput="cb_user"  type="text" value="{{mailuser}}"/>
+  </view>
+  <view class="line"></view>
+  <view class="flex bg-white align-center">
+	<view class="text-2 text-center padding"> 密码: </view>
+	<input  style="padding-left:10px;" placeholder='请输入密码'
+		bindinput="cb_passwd" type="text" value="{{mailpasswd}}"/>
+  </view>
+  <view style="padding-bottom:10px;"></view>
+  <button class="margin text-1 bg-green" bindtap="cb_save">保存</button>
+
+
 </view>

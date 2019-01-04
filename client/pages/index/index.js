@@ -134,7 +134,7 @@ Page({
 				var info = conf.banks[idx]
 				card.bankshort = info.short
 				card.background = info.color
-				console.log(card)
+				console.log("====", card)
 				card.bill_start = new Date(card.bill_start * 1000)
 				card.bill_stop = new Date(card.bill_stop * 1000)
 				console.log(card.bill_start, card.bill_stop)

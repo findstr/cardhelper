@@ -6,7 +6,9 @@ Page({
                 motto: 'Hello World',
                 userInfo: {},
                 hasUserInfo: false,
-                canIUse: wx.canIUse('button.open-type.getUserInfo')
+                canIUse: wx.canIUse('button.open-type.getUserInfo'),
+		mailuser: "",
+		mailpasswd: ""
         },
 	pullinfo() {
 		var _this = this
@@ -25,6 +27,14 @@ Page({
 				})
 			}
 		})
+		var HTTP = app.HTTP
+		HTTP.post('/getmail')
+		.then((res) => {
+			_this.data.mailuser = res.user
+			_this.data.mailpasswd = res.passwd
+			_this.setData(_this.data)
+			console.log(res)
+		})
 	},
 	onLoad: function () {
 		var _this = this
@@ -39,14 +49,34 @@ Page({
         getUserInfo() {
 		var _this = this
 		wx.checkSession({
-			fail() {
-				app.login(function (){
-					_this.pullinfo()
-				 })
-			},
 			success() {
 				_this.pullinfo()
 			}
 		})
-        }
+        },
+	cb_user(e) {
+		this.data.mailuser = e.detail.value
+		this.setData(this.data)
+	},
+	cb_passwd(e) {
+		this.data.mailpasswd = e.detail.value
+		this.setData(this.data)
+	},
+	cb_save(e) {
+		console.log(e)
+		var HTTP = app.HTTP
+		HTTP.post('/setmail', {
+			user: this.data.mailuser,
+			passwd: this.data.mailpasswd
+		}).then((res)=>{
+			console.log(res)
+		}).catch((err)=>{
+			wx.showToast({
+				title: "输入无效",
+				icon: "none",
+				duration: 1000
+			})
+			console.log(err)
+		})
+	}
 })
