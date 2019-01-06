@@ -142,6 +142,7 @@ local function checkbill(card)
 	local last = nextbilldate(card)
 	if card.bill_month ~= today.month then
 		card.bill_month = today.month
+		card.repay_date = 0 --reset repay status
 		typeof_bill(card)
 	end
 	local nxt = nextbilldate(card)
