@@ -31,7 +31,7 @@ Page({
 					card.bill_stop = t
 				} else {
 					card.tips_str = "天后还款"
-					card.tips_color = 'bg-yellow'
+					card.tips_color = 'bg-red'
 				}
 			}
 			card.tips_num = (card.bill_stop - today) / 86400000

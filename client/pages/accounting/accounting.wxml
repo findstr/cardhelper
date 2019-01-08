@@ -1,11 +1,11 @@
-<custom style="height:65px">
-  <bar class="fixed gradual-blue" style="height:65px;padding-top:20px;">
+<custom>
+  <bar class="fixed">
     <navigator class='action' open-type="navigateBack" delta="1" hover-class="none">
       <icon class='icon-back' /> 记账
     </navigator>
   </bar>
 </custom>
-<view id="container" class="background margin-xl padding-xl bg-cyan radius shadow-lg">
+<view id="container" class="bg-white">
 	<view>
 		<view class="flex align-center justify-between">
 			<view class="text-lg "> 消费:</view>

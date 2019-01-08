@@ -1,60 +1,67 @@
-<custom style="height:65px">
-  <bar class="fixed gradual-blue" style="height:65px;padding-top:20px;">
+<custom>
+  <bar class="fixed">
     <navigator class='action' open-type="navigateBack" delta="1" hover-class="none">
       <icon class='icon-back' /> 卡片信息
     </navigator>
   </bar>
 </custom>
-<view id="container"  class="background margin-xl padding-xl bg-{{background}} radius shadow-lg">
-	<view class="item-column">
-		<view class="item-row padding">
-			<view class="text"> 发卡银行:</view>
-                        <picker bindchange="bank_change" class = "flex border align-center" 
+<view id="container"  class="bg-white">
+	<view class="flex flex-direction margin">
+		<view class="flex justify-between">
+			<view class="text-2"> 发卡银行:</view>
+                        <picker bindchange="bank_change" class = "flex align-center" 
 				value="{{bank_value}}" range="{{banks}}">
 				<view class="input">
 					{{banks[bank_value]}}
 				</view>
                         </picker>
 		</view>
-		<view class="item-row padding">
-			<view class="text text-center"> 帐单日:</view>
-                        <picker bindchange="billday_change" class = "flex border align-center" 
+		<view class="line"></view>
+		<view class="flex justify-between">
+			<view class="text-2 text-center"> 帐单日:</view>
+                        <picker bindchange="billday_change" class = "flex align-center" 
 				value="{{bill_value}}" range="{{days}}">
 				<view class="input">
 					{{days[bill_value]}}日
 				</view>
                         </picker>
 		</view>
-		<view class="item-row padding">
-			<view class="text"> 还款日:</view>
-			<picker bindchange="repayday_change" class = "flex border align-center" 
+		<view class="line"></view>
+		<view class="flex justify-between">
+			<view class="text-2"> 还款日:</view>
+			<picker bindchange="repayday_change" class = "flex align-center" 
 				value="{{repay_value}}" range="{{days}}">
 				<view class="input">
 					{{days[repay_value]}}日
 				</view>
 			</picker>
 		</view>
-		<view class="item-row padding">
-			<view class="text"> 卡号:</view>
-			<input bindinput="num_change" type="text" value="{{num}}"/>
+		<view class="line"></view>
+		<view class="flex justify-between">
+			<view class="text-2"> 卡号:</view>
+			<input bindinput="num_change" type="text" placeholder="后4位" value="{{num}}"/>
 		</view>
-		<view class="item-row padding">
-			<view class="text"> 额度:</view>
-			<input bindinput="limit_change" type="number" value="{{limit}}"/>
+		<view class="line"></view>
+		<view class="flex justify-between">
+			<view class="text-2"> 额度:</view>
+			<input bindinput="limit_change" type="number" placeholder="元" value="{{limit}}"/>
 		</view>
-		<view class="item-row padding">
-			<view class="text"> 已出账:</view>
+		<view class="line"></view>
+		<view class="flex justify-between">
+			<view class="text-2"> 已出账:</view>
 			<input bindinput="billed_change" type="digit" value="{{billed}}"/>
 		</view>
-                <view class="item-row padding">
-			<view class="text"> 未出账:</view>
+		<view class="line"></view>
+                <view class="flex justify-between">
+			<view class="text-2"> 未出账:</view>
 			<input bindinput="billing_change" type="digit" value="{{billing}}"/>
 		</view>
-		<view class="item-row padding">
-			<button class="shadow margin-tb-sm text-center round bg-red" bindtap="cb_delete">删除</button>
-			<button class="shadow margin-tb-sm text-center round bg-green" bindtap="cb_repay" wx:if="{{!repaid}}">还清</button>
-			<button class="shadow margin-tb-sm text-center round bg-yellow" bindtap="cb_bill" wx:else>出帐</button>
-			<button class="shadow margin-tb-sm text-center round bg-white" bindtap="cb_save">保存</button>
-		</view>
+		<view class="line"></view>
 	</view>
+</view>
+<view class="padding flex flex-direction">
+	<button style="margin-top:10px;" class="text-center bg-green" bindtap="cb_save">保存</button>
+	<button style="margin-top:10px;" class="text-center bg-white" bindtap="cb_repay" wx:if="{{!repaid}}">还清</button>
+	<button style="margin-top:10px;" class="text-center bg-white" bindtap="cb_bill" wx:else>出帐</button>
+	<button style="margin-top:10px;" class="text-center bg-white" bindtap="cb_delete">删除</button>
 </view>
