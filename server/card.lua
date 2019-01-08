@@ -142,6 +142,7 @@ local function checkbill(card)
 	local last = nextbilldate(card)
 	if card.bill_month ~= today.month then
 		card.bill_month = today.month
+		card.repay_date = 0 --reset repay status
 		typeof_bill(card)
 	end
 	local nxt = nextbilldate(card)
@@ -295,21 +296,21 @@ local function timer_user(openid)
 	if repay_count > 0 or bill_count > 0 then
 		strbuf[1] = "未来8天内"
 	end
-	core.log("timer", os.date("%Y-%m-%d", now), openid, bill_count, repay_count)
 	if repay_count ~= 0 then
-		strbuf[2] = format("%s个信用卡待还清", repay_count)
+		strbuf[#strbuf + 1] = format("%s个信用卡待还清", repay_count)
 	end
 	if bill_count ~= 0 then
 		strbuf[#strbuf + 1] = format("%s个信用卡待出账", bill_count)
 	end
 	tryfetchmail(openid, cards, strbuf)
+	core.log("timer", os.date("%Y-%m-%d", now), openid, bill_count, repay_count, #strbuf)
 	for _, card in pairs(cards) do
 		if card._dirty then
 			local dat = proto:encode("card", card)
 			db:hset(dbk, card.num, dat)
 		end
 	end
-	if #strbuf > 1 then
+	if #strbuf > 0 then
 		auth.notify(openid, table.concat(strbuf, ","))
 	end
 end

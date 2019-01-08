@@ -99,12 +99,31 @@ local function bankcomm(d)
 end
 
 --浦发
-local function spdb(d)
-	local obj = new("交通银行")
-	local root = html.parse(d)
-	--root = root:selectn("table", 5)[1]
-	P(root, 0)
+local function spdb(_, _, d)
+	local day
+	local rvs = string.reverse(d)
+	local n = rvs:find("<", 1, true)
+	d = d:sub(1, -n)
+	d = ("<html>" .. d .. "</html>"):gsub("=>", ">")
+	local obj = new("浦发银行")
+	local root = html.parse(d):select("a")[1]:selectn("table", 3)[2]
+	root = root:select("table")
+	obj.cost = tonum(root[3]:select("span")[1].child[1])
+	local date = root[5]:select("td")[2].child[1]
+	obj.year, obj.month, day = date:match("(%d+)/(%d+)/(%d+)")
+	day = tonumber(day)
+	if day < 20 then
+		obj.month = tonumber(obj.month)
+		obj.month = obj.month - 1
+		if obj.month < 1 then
+			obj.month = 12
+			obj.year = tonumber(obj.year)
+			obj.year = obj.year - 1
+		end
+	end
+	return obj
 end
+
 
 --广发
 local function cgbc(d)
@@ -124,14 +143,14 @@ local banks = {
 	["招商"] = cmbc,
 	["建设"] = ccb,
 	["交通"] = bankcomm,
-	--["浦发"] = spdb,
+	["浦发"] = spdb,
 	["广发"] = cgbc,
 }
 
 local function parsemail(m)
 	for k, v in pairs(banks) do
 		if m.subject:find(k) then
-			return v(m.body, m.subject)
+			return v(m.body, m.subject, m.raw)
 		end
 	end
 end
