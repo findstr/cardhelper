@@ -286,7 +286,7 @@ local function timer_user(openid)
 			card.notify = bill_type
 			if bill_type == TYPE_BILL then
 				bill_count = bill_count + 1
-			else
+			elseif card.repay_date == 0 then
 				repay_count = repay_count + 1
 			end
 			card._dirty = true
