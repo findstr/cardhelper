@@ -20,7 +20,6 @@ card {
 	.repayday:integer 5
 	.billed:float 6
 	.billing:float 7
-	.bill_month:integer 8
 	.bill_type:integer 9
 	.bill_start:integer 10
 	.bill_stop:integer 11
@@ -85,8 +84,6 @@ local function typeof_bill(card)
 			card.bill_type = TYPE_REPAY
 			card.bill_start = os.time(bill_date)
 			card.bill_stop = os.time(repay_date)
-			print("=========bill_start", card.bill_start, card.bill_stop)
-			print("========", json.encode(bill_date), json.encode(repay_date))
 		else
 			card.bill_type = TYPE_BILL
 			if diff(today, repay_date) > 0 then
@@ -138,25 +135,24 @@ local function nextbilldate(card)
 end
 
 local function checkbill(card)
-	local today = someday()
+	local today = os.time(someday())
 	local last = nextbilldate(card)
-	if card.bill_month ~= today.month then
-		card.bill_month = today.month
-		card.repay_date = 0 --reset repay status
+	if not card.bill_stop or today > card.bill_stop  then
 		typeof_bill(card)
+		if card.repay_date ~= card.bill_stop then
+			card.repay_date = 0 --reset repay status
+		end
 	end
 	local nxt = nextbilldate(card)
 	local prev = os.time(prevmonth(os.date("*t", nxt)))
-	local billing_date = card.billing_date
+	local billing_date = card.billing_date or 0
 	card.billing_date = nxt
 	if nxt ~= last then
-		if billing_date and prev == billing_date then
+		if today > billing_date then
 			card.billed = card.billing
-		else
-			card.billed = 0
+			card.billing = 0
 		end
 		card.notify = nil
-		card.billing = 0
 		return true
 	end
 	return false
@@ -168,12 +164,8 @@ dispatch["/addcard"] = function(fd, req, body)
 	local ok, obj = db:hget(dbk, body.num)
 	if obj then
 		obj = proto:decode("card", obj)
-		body.billing_date = obj.billing_date
-		if obj.repayday ~= body.repayday or obj.billday ~= body.billday then
-			body.bill_month = false
-		else
+		if obj.repayday == body.repayday and obj.billday == body.billday then
 			body.bill_type = obj.bill_type
-			body.bill_month = obj.bill_month
 			body.bill_start = obj.bill_start
 			body.bill_stop = obj.bill_stop
 		end

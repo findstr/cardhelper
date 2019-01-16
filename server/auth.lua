@@ -127,7 +127,7 @@ function M.notify(openid, content)
 	print(now)
 	if not user.formexpire or user.formexpire < now then
 		core.log("failed to notify", openid, content,
-			user.formexpire, user.formexpire < now)
+			user.formexpire, now)
 		return
 	end
 	local url = notify_url .. user.accesstoken
